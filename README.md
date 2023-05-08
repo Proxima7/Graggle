@@ -1,4 +1,6 @@
 # Graggle
+![Graggle Logo!](/graggle_logo_large_dark_background.png)
+
 Data is all you need. Graggle is a data-catalogue and warehouse with metadata management features. It makes managing, searching, governing, and sharing data easy, with seamless connections to data lake architectures. It also offers data inspection and tagging features for effective dataset management.
 
 ## Features
