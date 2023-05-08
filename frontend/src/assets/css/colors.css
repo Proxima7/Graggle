@@ -1,0 +1,134 @@
+:root {
+  /* Color palette */
+  --primary: #5c77f1;
+  --secondary: #ff2d55;
+  --gray: #7c8ba1;
+
+  /* Background colors */
+  --bg-header: #445382;
+  --bg-sidemenu: #3c4858;
+}
+
+/* Default styles */
+body {
+  background-color: var(--bg-header);
+  color: white;
+}
+
+a {
+  color: inherit;
+}
+
+/* Header */
+.header {
+  background-color: var(--bg-header);
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.header-search {
+  flex: 1;
+}
+
+.header-search input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background-color: var(--bg-sidemenu);
+  color: white;
+}
+
+.header-search input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-right a {
+  margin-left: 1rem;
+}
+
+/* Submenu button */
+.submenu-button {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submenu-button:hover {
+  background-color: var(--primary);
+}
+
+.submenu-button-icon {
+  margin-right: 0.5rem;
+}
+
+/* Sidemenu */
+.sidemenu {
+  background-color: var(--bg-sidemenu);
+  height: 100%;
+  width: 16rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 2rem;
+  transition: transform 0.2s ease-in-out;
+  transform: translateX(-100%);
+}
+
+.sidemenu-open {
+  transform: translateX(0);
+}
+
+.sidemenu-header {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.sidemenu-database {
+  margin-bottom: 1rem;
+}
+
+.sidemenu-database-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.sidemenu-database-title:hover {
+  background-color: var(--primary);
+}
+
+.sidemenu-database-title-icon {
+  margin-right: 0.5rem;
+}
+
+.sidemenu-database-title-text {
+  font-weight: bold;
+}
+
+.sidemenu-collection {
+  margin-left: 1rem;
+}
+
+.sidemenu-collection-item {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.sidemenu-collection-item:hover {
+  background-color: var(--primary);
+}
