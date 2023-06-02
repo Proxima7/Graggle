@@ -12,13 +12,15 @@
         <span v-if="dataset.generated==false" class="absolute top-5 right-5 h-5 w-5 bg-green-500 rounded-full"></span>
         <span v-else class="absolute top-5 right-5 h-5 w-5 bg-red-500 rounded-full"></span>
         <div class="bg-white p-4">
-        <h3 class="font-semibold text-lg">{{ dataset.database }}</h3>
+        <h3 class="font-semibold text-lg">{{ fixed_titel }}</h3>
         <p class="text-gray-500">{{ dataset.collection }}</p>
         </div>
     </div>
   </template>
   
   <script>
+  import { useGeneralStore } from '@/stores/general'
+
   export default {
     props: {
       dataset: {
@@ -29,12 +31,21 @@
     data() {
       return {
         showDescription: false,
+        gstore: useGeneralStore()
+      }
+    },
+    computed: {
+      fixed_titel(){
+        if(this.dataset.dataset_display_title.includes("<<Titel>>")){
+          return this.dataset.database
+        } 
+        return this.dataset.dataset_display_title
       }
     },
     methods: {
       selectDataset(dataset){
-        this.$store.state.selected_db = dataset.database
-        this.$store.state.selected_col = dataset.collection
+        this.gstore.selected_db = dataset.database
+        this.gstore.selected_col = dataset.collection
       }
     }
   };

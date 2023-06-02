@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
       <div class="grid grid-cols-1 gap-2">
-        <div v-for="database in datasets" class="bg-secondary py-2 px-4 rounded text-lg font-semibold" :class="{ 'bg-tertiary-900': is_active_database(database.name) }" @click="set_selected_database(database.name)">{{database.name}}
+        <div v-for="database in databasestore.get_datasets()" class="bg-secondary py-2 px-4 rounded text-lg font-semibold" :class="{ 'bg-tertiary-900': is_active_database(database.name) }" @click="set_selected_database(database.name)">{{database.name}}
             <ul v-if="is_active_database(database.name)" class="mt-2 border-l-4 border-secondary overflow-y-auto max-h-80 overflow-x-hidden">
                 <li v-for="col in database.collections" class="py-2 px-2 cursor-pointer text-m text-gray-300" :class="{ 'bg-tertiary-900': isActive(1, 1) }" @click="set_selected_collection(database.name, col)">{{ col.slice(0, 22) }} 
                 </li>
@@ -13,19 +13,24 @@
   </template>
   
   <script>
-    import requestHandler from "../logic/RequestHandler"
-
+    import { useGeneralStore } from '@/stores/general'
+    import { useDatabasesStore } from '@/stores/databases'
+    
     export default {
         data() {
-        return {
-            activeIndex: null,
-            datasets: ["loading"],
-            active_database: null,
-            collection_overwrite: false
-        }
+          return {
+              activeIndex: null,
+              datasets: ["loading"],
+              active_database: null,
+              collection_overwrite: false,
+              gstore: useGeneralStore(),
+              databasestore: useDatabasesStore()
+          }
+        },
+        computed: {
         },
         mounted() {
-            this.get_datasets()
+            this.databasestore.load()
         },
         methods: {
             is_active_database(database){
@@ -47,28 +52,21 @@
                 }
                 return this.activeIndex === menuIndex;
             },
-            get_datasets() {
-                var that = this;
-                var get_datasets_callback = function(resp) {
-                    that.datasets = resp.data;
-                }
-                var axiosreq = requestHandler.get_databases(get_datasets_callback);
-            },
             async set_selected_database(db){
               let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
               await sleep(50)
               if(!this.collection_overwrite){
                 this.active_database = db
-                this.$store.state.selected_db = ""
-                this.$store.state.selected_col = ""
-                this.$store.state.filter = ""
+                this.gstore.selected_db = ""
+                this.gstore.selected_col = ""
+                this.gstore.filter = ""
                 await sleep(50)
-                this.$store.state.filter = this.active_database
+                this.gstore.filter = this.active_database
               }
             },
             async set_selected_collection(db, col){
-                this.$store.state.selected_db = db
-                this.$store.state.selected_col = col
+                this.gstore.selected_db = db
+                this.gstore.selected_col = col
 
                 // avoid trigger of method "set_selected_database"
                 this.collection_overwrite = true

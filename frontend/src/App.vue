@@ -13,8 +13,8 @@
         </div>
         <!-- main frame -->
         <div class="overflow-auto w-5/6">
-          <ViewContainer v-if="is_db_col_selected() == true" class="w-full"></ViewContainer>
-          <DatasetOverview v-if="is_db_col_selected() == false" class="w-full"></DatasetOverview>
+          <DatasetContainer v-if="is_db_col_selected() == true" class="w-full"></DatasetContainer>
+          <DatasetsSummary v-if="is_db_col_selected() == false" class="w-full"></DatasetsSummary>
         </div>
         
       </div>
@@ -27,36 +27,48 @@
   </div>
 </template>
 
+
+
 <script>
 //import SideMenu from './components/SideMenu.vue'
 import Header from './components/Header.vue'
 import Footer from "./components/Footer.vue"
 import VSCodeMenu from './components/VSCodeMenu.vue';
-import ViewContainer from './components/ViewContainer.vue';
-import DatasetOverview from './components/views/DatasetView/DatasetOverview.vue';
+import DatasetContainer from './components/DatasetContainer.vue';
+import DatasetsSummary from './components/views/DatasetView/DatasetsSummary.vue';
+import { useGeneralStore } from '@/stores/general'
+
 
 export default {
   name: 'App',
+  setup() {
+  },
   data () {
     return {
+      gstore: useGeneralStore()
     }
+  },
+  mounted() {
   },
   components: {
     Header,
     Footer,
     VSCodeMenu,
-    ViewContainer,
-    DatasetOverview
+    DatasetContainer,
+    DatasetsSummary
   },
   methods: {
     is_db_col_selected(){
-      let db = this.$store.state.selected_db
-      let col = this.$store.state.selected_col
-      return (db != "" && col != "")
+      let db = this.gstore.selected_db
+      let col = this.gstore.selected_col
+      let is_it = (db != "" && col != "")
+      return is_it
     }
   }
 }
 </script>
+
+
 
 <style>
 html, body, #body2

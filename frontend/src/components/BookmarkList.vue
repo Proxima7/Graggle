@@ -7,7 +7,7 @@
               <img v-if="bookmark.image!=''" :src="bookmark.image" class="rounded mx-auto">
             </div>
             <div class="">
-              <div class="font-semibold text-lg">{{ bookmark.database }}</div>
+              <div class="font-semibold text-lg">{{ bookmark.title }}</div>
               <div class="text-gray-500 text-xs">{{ bookmark.collection }}</div>
             </div>
           </div>
@@ -17,50 +17,46 @@
   </template>
   
   <script>
-    import { Bookmark } from "./Helpers/Helper.js"
-    import requestHandler from "../logic/RequestHandler"
-    import { mapState } from 'vuex'
+    import { Bookmark } from "./Helpers/Bookmarks.js"
+    import { useGeneralStore } from '@/stores/general'
+    import { useDatasetStore } from '@/stores/dataset'
+    import { watch } from 'vue'
 
     export default {
         data() {
           return {
-              bookmarks: []
+              bookmarks: [],
+              gstore: useGeneralStore(),
+              datasetstore: useDatasetStore()
           }
         },
         computed: {
-            ...mapState(['amount_bookmarks'])
         },
         mounted() {
             this.handle_bookmarks()
+            watch(() => this.gstore.amount_bookmarks, (newValue, oldValue) => {
+              this.handle_bookmarks()
+          });
         },
         methods: {
           handle_bookmarks(){
               this.bookmarks = Bookmark.getBookmarksObj()
               for(let i = 0; i<this.bookmarks.length; i++){
-                this.get_dataset_description(i)
+                this.handle_bookmark(i)
               }
+              
+          },
+          async handle_bookmark(i){
+              let dataset_description = await this.datasetstore.read_dataset_description(this.bookmarks[i].database, this.bookmarks[i].collection)
+              this.bookmarks[i].image = dataset_description.image;
+              this.bookmarks[i].title = dataset_description.dataset_display_title;
+              
           },
           set_selected_collection(db, col){
-            this.$store.state.selected_db = db
-                this.$store.state.selected_col = col
-          },
-          async get_dataset_description(index) {
-              var that = this;
-              var dataset_description_callback = function (resp) {
-                  that.bookmarks[index].image = resp.data.image;
-              };
-              var dataset_description_callback_error = function (error) {
-              };
-              let db = this.bookmarks[index].database
-              let col = this.bookmarks[index].collection
-              requestHandler.get_dataset_description(dataset_description_callback, dataset_description_callback_error, db, col);
+              this.gstore.selected_db = db
+              this.gstore.selected_col = col
           }
-        },
-    watch: {
-        amount_bookmarks(newValue, oldValue) {
-            this.handle_bookmarks()
         }
-    }
     }
   </script>
   
