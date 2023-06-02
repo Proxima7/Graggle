@@ -33,13 +33,15 @@
                   <!-- content -->
                   <component :is="item.comp"></component>
                 </div>
-            </div>
+            </div>            
+          </div>
         </div>
+
     </div>
-  </div>
 </template>
 
 <script>
+import Options from './Options.vue';
 import DatasetList from './DatasetList.vue';
 import BookmarkList from './BookmarkList.vue';
 import Filters from './Filters.vue';
@@ -56,11 +58,17 @@ export default {
         {icon: 'fa-database', active: true, title: 'Datasets', comp: "DatasetList"},
         {icon: 'fa-bookmark', active: false, title: 'Bookmarks', comp: "BookmarkList"},
         {icon: 'fa-filter', active: false, title: 'Filters', comp: "Filters"},
+        {icon: 'fa-bars', active: false, title: 'Options', comp: "Options"},
       ],
     }
   },
   methods: {
     menu_btn_click (item) {
+      // do nothing if selected item is already active
+      if(item.active == true){
+        return
+      }
+
       // toggle menu if clicked on same button
       var idxClicked = this.menu_items.indexOf(item)
       var currActive = this.menu_items.findIndex(item => item.active)
@@ -98,7 +106,8 @@ export default {
   components: {
     DatasetList,
     BookmarkList,
-    Filters
+    Filters,
+    Options
   }
 }
 </script>

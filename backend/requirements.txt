@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+pymongo
+database-accessor
+opencv-python

@@ -2,7 +2,7 @@
     <div class="flex flex-col justify-center items-stretch">
       <h2 class="text-lg font-semibold mb-4 mx-auto">Comments</h2>
       <div class="w-full">
-        <div v-for="comment in comments" :key="comment.id" class="border rounded-md p-4 mb-4 w-full ">
+        <div v-for="comment in commentsStore.comments" :key="comment.id" class="border rounded-md p-4 mb-4 w-full ">
           <div class="text-gray-700 font-bold">{{ comment.person }}</div>
           <div class="text-gray-600">{{ comment.text }}</div>
         </div>
@@ -50,59 +50,37 @@
   </template>
   
   <script>
-  import requestHandler from "../../../logic/RequestHandler"
-  import { mapState } from 'vuex'
+  import { useGeneralStore } from '@/stores/general'
+  import { useCommentsStore } from '@/stores/comments'
+  import { watch } from 'vue'
 
   export default {
     data() {
       return {
-        comments: [
-          { id: 1, person: "...", text: "Post the first comment" },
-        ],
         newComment: {
           person: '',
           text: '',
         },
         showForm: false,
+        gstore: useGeneralStore(),
+        commentsStore: useCommentsStore()
       };
     },
     mounted() {
-        this.loadComments()
+        this.commentsStore.load(this.gstore.selected_db, this.gstore.selected_col)
+        watch(() => this.gstore.selected_col, (newValue, oldValue) => {
+          this.commentsStore.load(this.gstore.selected_db, this.gstore.selected_col)
+        });
     },
     computed: {
-        ...mapState(['selected_col'])
     },
     methods: {
-      loadComments(){
-        var that = this;
-            var dataset_comments_callback = function (resp) {
-                console.log(that.comments)
-                that.comments = resp.data.comments;
-                console.log(that.comments)
-            };          
-
-            let db = this.$store.state.selected_db
-            let col = this.$store.state.selected_col
-            requestHandler.get_dataset_comments(dataset_comments_callback, db, col);
-        
-      },
       addComment() {
-        const newId = this.comments.length + 1;
-        const newComment = {
-          id: newId,
-          person: this.newComment.person,
-          text: this.newComment.text,
-        };
-        this.comments.push(newComment);
+        this.commentsStore.add_comment(this.newComment.person, this.newComment.text)
         this.newComment.person = '';
         this.newComment.text = '';
         this.showForm = false;
       },
-    },
-    watch: {
-        selected_col(newValue, oldValue) {
-            this.loadComments()
-        }
     }
   };
   </script>

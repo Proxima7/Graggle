@@ -2,7 +2,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import { createStore } from 'vuex'
+import { createPinia, setActivePinia } from "pinia" 
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -15,10 +15,11 @@ import {
     faUser, faDatabase, faSearch, faBars, faTimes, faChevronDown, faChevronUp, faLeaf, faBookmark, 
     faHome, faChevronLeft, faChevronRight, faChevronCircleRight, faChevronCircleLeft, faPlusCircle, faMinusCircle,
     faStar, faHardDrive, faFile, faVectorSquare, faCalendarCheck, faCalendarPlus, faCirclePlus, faImage, faCheck, 
-    faComments, faShareNodes, faXmark, faFilter
+    faComments, faShareNodes, faXmark, faFilter, faMaximize, faMinimize, faShuffle,
+    faSliders, faCodePullRequest, faFileImport, faCode, faLanguage, faBookOpen
   } from '@fortawesome/free-solid-svg-icons'
 
-  import { 
+import { 
      faBookmark as faBookmarkRegular, faPenToSquare
   } from '@fortawesome/free-regular-svg-icons'
 
@@ -54,30 +55,25 @@ library.add(faShareNodes)
 library.add(faXmark)
 library.add(faPenToSquare)
 library.add(faFilter)
-
-const store = createStore({
-    state () {
-      return {
-        selected_db: "",
-        selected_col: "",
-        filter: "",
-        amount_bookmarks: 0
-      }
-    },
-    mutations: {
-        print_selected_collection (state) {
-            console.log(state.selected_col + " " +state.selected_db)
-        }
-    }
-  })
+library.add(faMaximize)
+library.add(faMinimize)
+library.add(faShuffle)
+library.add(faSliders)
+library.add(faCodePullRequest)
+library.add(faFileImport, faCode, faLanguage, faBookOpen)
 
 
-/* other components like json viewer */
-import JsonViewer from "vue3-json-viewer";
-import "vue3-json-viewer/dist/index.css";
+const pinia = createPinia()
+setActivePinia(pinia);
+
+
+
 
 const myapp = createApp(App)
 .component('font-awesome-icon', FontAwesomeIcon)
-.use(JsonViewer)
-.use(store)
-.mount('#app')
+.use(pinia)
+
+myapp.mount('#app')
+
+
+

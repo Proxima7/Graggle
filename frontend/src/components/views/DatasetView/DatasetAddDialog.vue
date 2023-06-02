@@ -56,7 +56,7 @@
                                     </div>
                                     <div class="mt-0 flex flex-col justify-between rounded-lg border border-dashed border-gray-900/25 px-6 py-10 relative" :class="getColor(1)">
                                         <img src='../../../assets/gear.png' class="mx-auto h-24  text-gray-300" alt="Product screenshot">
-                                        <p class="text-sm text-gray-600 text-center">automatical creat from images</p>
+                                        <p class="text-sm text-gray-600 text-center">automatical create from images</p>
                                         <div class="absolute inset-0 bg-gray-700 opacity-0" @click="toggleSelection() "></div>
                                         <!--<font-awesome-icon class="absolute" icon="fa-solid fa-check" size="2xl" />-->
                                     </div>
@@ -69,8 +69,8 @@
                                         <label for="usability" class="block text-sm font-medium leading-6 text-gray-900">Usability</label>
                                     </div>
                                     <div class="p-2">
-                                        <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                            <input required type="usability" name="usability" id="usability" v-model="usability" autocomplete="titel" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="4.5"/>
+                                        <div class="flex sm:max-w-md">
+                                            <Slider @slider-value-updated="handleSliderValue"></Slider>
                                         </div>
                                     </div>
 
@@ -105,8 +105,9 @@
 
 <script>
 import LoadingOverlay from "../../Helpers/LoadingOverlay.vue"
-import requestHandler from "../../../logic/RequestHandler"
-
+import Slider from "../../Helpers/Slider.vue"
+import { useGeneralStore } from '@/stores/general'
+import { useDatasetStore } from '@/stores/dataset'
 
 
 export default {
@@ -116,8 +117,11 @@ export default {
       required: true
     },
   },
+  computed: {
+  },
   components: { 
-    LoadingOverlay 
+    LoadingOverlay,
+    Slider 
   }, 
   data() {
     return {
@@ -131,7 +135,9 @@ export default {
       desc: "",
       usability: "",
       createdby: "",
-      image: "",
+      image: "",            
+      gstore: useGeneralStore(),
+      datasetstore: useDatasetStore()
     };
   },
   computed: {
@@ -147,7 +153,6 @@ export default {
         this.usability = ""
         this.createdby = ""
         this.image = ""
-
         this.$emit('update:showDialog')
     },
     getColor(input) {
@@ -162,6 +167,9 @@ export default {
         } else {
             this.selection = 1
         }
+    },
+    handleSliderValue(value) {
+      this.usability = value;
     },
     handleFileUpload() {
      let that = this
@@ -189,13 +197,11 @@ export default {
             this.error = ""
         } else {
             this.loading = true;
-            this.error = ""
-        
+            this.error = ""        
 
-            var that = this;
             var body = {
-                            "database": this.$store.state.selected_db, 
-                            "collection": this.$store.state.selected_col, 
+                            "database": this.gstore.selected_db, 
+                            "collection": this.gstore.selected_col, 
                             "dataset_display_title": this.titel, 
                             "short_description": this.shortdesc, 
                             "dataset_description": this.desc, 
@@ -204,19 +210,15 @@ export default {
                             "image": this.image
                         }
 
-            
-        
-            var dataset_description_post_callback = function (resp) {
-                that.closeDialog()
-                that.loading = false;
-            };
-            var dataset_description_post_callback_error = function (error) {
-                that.loading = false;
-                that.error = "Fehler beim erzeugen der Dataset Description"
-            };
-            var axiosreq = requestHandler.post_dataset_description(dataset_description_post_callback, dataset_description_post_callback_error, body);
-            }        
-        
+            let success = await this.datasetstore.post_dataset_description(body)
+            if(success) {
+                this.closeDialog()
+                this.loading = false;
+            } else {
+                this.loading = false;
+                this.error = "Fehler beim erzeugen der Dataset Description"
+            }
+        }      
     }
   }
 };
