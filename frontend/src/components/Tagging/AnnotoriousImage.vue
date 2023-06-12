@@ -150,15 +150,12 @@ export default {
       this.anno.on('selectAnnotation', this.selectAnnotation)
     },
     loadImage(){    
-
-    if(this.annotations){
-      const annos = Annotations.getAnnotoriousAnnoations(this.annotations)      
-      this.anno.setAnnotations(annos);
-    }
-    
-    
-    window.viewer = this.viewer
-    window.anno = this.anno
+      if(this.annotations){
+        const annos = Annotations.getAnnotoriousAnnoations(this.annotations)      
+        this.anno.setAnnotations(annos);
+      }     
+      window.viewer = this.viewer
+      window.anno = this.anno
     }
   },
   watch: {

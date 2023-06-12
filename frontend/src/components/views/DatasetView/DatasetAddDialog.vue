@@ -58,7 +58,6 @@
                                         <img src='../../../assets/gear.png' class="mx-auto h-24  text-gray-300" alt="Product screenshot">
                                         <p class="text-sm text-gray-600 text-center">automatical create from images</p>
                                         <div class="absolute inset-0 bg-gray-700 opacity-0" @click="toggleSelection() "></div>
-                                        <!--<font-awesome-icon class="absolute" icon="fa-solid fa-check" size="2xl" />-->
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +184,7 @@ export default {
         this.error = ""
         this.selection = 2
       } else {        
-        this.error = "Falsches Dateiformat"
+        this.error = "Wrong data format (only .png, .jpg and .jpeg)"
         this.selection = 1
       }    
     },

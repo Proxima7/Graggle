@@ -60,7 +60,10 @@ library.add(faMinimize)
 library.add(faShuffle)
 library.add(faSliders)
 library.add(faCodePullRequest)
-library.add(faFileImport, faCode, faLanguage, faBookOpen)
+library.add(faCode)
+library.add(faLanguage)
+library.add(faBookOpen)
+library.add(faFileImport)
 
 
 const pinia = createPinia()

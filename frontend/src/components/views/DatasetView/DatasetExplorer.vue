@@ -150,6 +150,7 @@ export default {
         async load(){
             this.datasetstore.low_resolution = true
             let col = this.gstore.selected_col
+            // only when component is visible and current collection doesn't change
             while(this.records_queried<this.records_max && col == this.gstore.selected_col && this.visible){
                 await this.datasetstore.get_data(false)
                 this.records_queried = this.records_queried + 1
@@ -175,12 +176,11 @@ export default {
 </script>
 
 <style>
-.expand-enter-active {
-  transition: height 0.3s;
-}
+    .expand-enter-active {
+    transition: height 0.3s;
+    }
 
-.expand-leave-active {
-  transition: height 0.3s;
-}
-
+    .expand-leave-active {
+    transition: height 0.3s;
+    }
 </style>

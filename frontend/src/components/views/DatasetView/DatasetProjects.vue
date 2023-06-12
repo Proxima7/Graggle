@@ -19,18 +19,18 @@
         projects: [
         {   id: 1, 
             name: "Fruit Recognition V3", 
-            desc: "Fruit Recognition for Carrefoure based in Dubai Data", 
-            link: "https://dev.azure.com/matthiasrieger/ArtificialIntelligence/_build/results?buildId=265&view=results"
+            desc: "Fruit Recognition for CustomerX based in CityY Data", 
+            link: "https://www.google.de/"
           },
           { id: 2, 
             name: "DIY Hornbach", 
-            desc: "Hornbach Sanitary Article Detection", 
-            link: "https://dev.azure.com/matthiasrieger/ArtificialIntelligence/_git/ai-gen-ms-model-pool?path=/models/diy/v2"
+            desc: "CustomerM Sanitary Article Detection", 
+            link: "https://www.google.de/"
           },
           { id: 3, 
             name: "DIY Hornbach - V2", 
-            desc: "Hornbach Sanitary Article Detection - new Model", 
-            link: "https://dev.azure.com/matthiasrieger/ArtificialIntelligence/_git/ai-gen-ms-model-pool?path=/models/diy/v5"
+            desc: "CustomerM Sanitary Article Detection - new Model", 
+            link: "https://www.google.de/"
           }
         ]
       };

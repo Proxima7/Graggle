@@ -41,13 +41,10 @@
             <div class="flex-1 overflow-y-auto border-2 shadow rounded p-4">
                 <div class=" ">
                     <p class="text-3xl font-bold"><small>JSON</small></p>
-                    <!--<JsonViewer :expand="true" :value="datasetstore.data_get_current_documents()" copyable sort theme="light" @onKeyClick="keyClick" />
-                    <JsonViewer :expand="true" :value="datasetstore.data_get_current_documents()" copyable sort theme="light" @onKeyClick="keyClick" />-->
                     <vue-json-pretty :data="datasetstore.data_get_current_documents()" expand=true  
                         deep="3" virtual=true editable=true height=540 showLength=true @onKeyClick="keyClick" />
                     
                 </div>
-                <!--<JsonViewer v-for="doc in documents" :value="doc" copyable sort theme="light" @onKeyClick="keyClick" />-->
             </div>
         </div>
         <div class="col-span-4 border-2 shadow rounded p-4">
