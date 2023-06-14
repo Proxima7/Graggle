@@ -19,6 +19,7 @@ def convert_ndarray_to_base_64(image: np.ndarray):
     '''
     image_as_array = cv2.imencode('.png', image)[1].tobytes()
     return base64.b64encode(image_as_array).decode()
+
 def convert_base_64_to_ndarray(base64img: str):
     '''
     Converts a Base64 encoded image (as returned by our DB) to a ndarray grayscale image.
@@ -37,7 +38,6 @@ def convert_base_64_to_ndarray(base64img: str):
     decoded_img = np.array(imread(io.BytesIO(base64.b64decode(encoded_img))))
     swapped = decoded_img[..., [2, 1, 0]].copy()
     return swapped
-
 
 def check_base64_image(image_base64: str):
     '''
@@ -108,3 +108,12 @@ def create_random_4_3_preview_image(images: list):
 
     return preview_image
 
+def object_to_dict(obj):
+    if isinstance(obj, (int, float, str)):
+        return obj
+    elif isinstance(obj, dict):
+        return {k: object_to_dict(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [object_to_dict(item) for item in obj]
+    else:
+        return {k: object_to_dict(v) for k, v in obj.__dict__.items()}

@@ -1,10 +1,10 @@
 <template>
     <div class="">
       <div class="grid grid-cols-1 gap-2">
-        <div  v-for="database in databasestore.get_datasets()">          
-          <div class="font-semibold mx-2 text-3xl underline mt-4" v-if="datasets_complete[database.name] ">{{database.name}}</div>
+        <div  v-for="database in databasestore.get_databases()">          
+          <div class="font-semibold mx-2 text-3xl underline mt-4" v-if="datasets_complete[database.database_name] ">{{database.database_name}}</div>
           <div class="grid grid-cols-6 gap-2  ">        
-            <DatasetOverviewCard v-for="dataset in datasets_complete[database.name]" :key="dataset.collection" :dataset="dataset" 
+            <DatasetOverviewCard v-for="dataset in datasets_complete[database.database_name]" :key="dataset.collection" :dataset="dataset" 
             class="flex flex-col m-2 border-2 shadow rounded"/>
           </div>
         </div>    
