@@ -100,15 +100,15 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         return dataset_description
 
     def update_dataset_description(self, database: str, collection: str, number_of_documents: int, size_mb: float, created: str, last_update: str):
-            db = my_mongo_client["graggle"]
-            coll = db["dataset_descriptions"]
-            query = {"database": database, "collection": collection}
-            new_value = {"$set": {"descriptors.number_of_documents": number_of_documents, "descriptors.size_mb": size_mb,
-                                  "descriptors.created": created, "descriptors.last_update": last_update}}
-            try:
-                coll.update_one(query, new_value)
-            except Exception as e:
-                print(e)
+        db = my_mongo_client["graggle"]
+        coll = db["dataset_descriptions"]
+        query = {"database": database, "collection": collection}
+        new_value = {"$set": {"descriptors.number_of_documents": number_of_documents, "descriptors.size_mb": size_mb,
+                              "descriptors.created": created, "descriptors.last_update": last_update}}
+        try:
+            coll.update_one(query, new_value)
+        except Exception as e:
+            print(e)
 
     def create_dataset_description(self, dataset_description: DatasetDescription):
         dataset_description = utils.object_to_dict(dataset_description)
@@ -141,6 +141,9 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         return inserted_ids
 
 class DataTransferMongoDBMinioS3(DataTransferInterface):
+    # remove system databases
+    ignore_dbs = ['admin', 'config', 'local', 'garbage_collector', 'graggle', 'org', 'test', 'request_log',
+                  'test-customer-root-id-test-customer-id']
 
     def __init__(self):
         pass
@@ -152,10 +155,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
     def get_databases(self) -> Databases:
         # databases
         databases = list(my_mongo_client.list_database_names())
-        # remove system databases
-        ignore_dbs = ['admin', 'config', 'local', 'garbage_collector', 'graggle', 'org', 'dev2', 'test', 'request_log',
-                      'test-customer-root-id-test-customer-id']
-        databases = [db for db in databases if db not in ignore_dbs]
+        databases = [db for db in databases if db not in self.ignore_dbs]
 
         # bring into return format
         dbs = [DatabaseCollections(database_name=db_name,
