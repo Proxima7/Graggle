@@ -5,9 +5,9 @@
       isCollapsed ? 'min-w-[50px]': 'min-w-[250px]'
     ]
       ">
-    <div class="flex flex-col h-full min-h-100">
-        <div class="grid grid-cols-12 h-full min-h-100 p-0">
-            <div :class="[buttons_col_span, 'bg-secondary h-full min-h-100 min-w-[50px]']">
+    <div class="flex flex-col h-full ">
+        <div class="grid grid-cols-12 p-0 h-full">
+            <div :class="[buttons_col_span, 'bg-secondary min-w-[50px]']">
               <!-- left buttons -->
               <div 
                 v-for="(item) in menu_items" v-bind:key="item.id" 
@@ -31,7 +31,7 @@
                   </div>
                   
                   <!-- content -->
-                  <component :is="item.comp"></component>
+                  <component class="h-full" :is="item.comp" ></component>
                 </div>
             </div>            
           </div>

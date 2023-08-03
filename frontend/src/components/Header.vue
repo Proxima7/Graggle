@@ -3,7 +3,7 @@
         <!-- logo and left side-->
         <div class="col-span-2 p-2 flex justify-center m-auto">
             <div>
-                <img class="h-14" src="../assets/graggle_logo_large.png" @click="resetSelectedCollection()"/>
+                <img class="h-22" src="../assets/graggle_logo_large.png" @click="resetSelectedCollection()"/>
             </div>
         </div>
         <div class="col-span-10 flex">

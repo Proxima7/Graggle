@@ -1,26 +1,26 @@
 <template>
-  <div class="flex flex-col h-screen">
+  <div class="flex flex-col min-h-screen mainer">
 
-    <div class="h-22">
+    <div class="h-22 w-full " >
       <Header />
     </div>
 
-    <div class="flex-1 overflow-auto">
-      <div class="flex flex-row h-full">
-        <!-- sidebar -->
-        <div class="w-1/6">
-          <VSCodeMenu class="w-full h-full" />
+    <main class="wrapper overflow-y-hidden overflow-x-hidden h-full">
+      <!-- sidebar -->
+      <div class="sidebar overflow-y-auto">
+          <div class="flex flex-col h-full">
+            <VSCodeMenu class="flex-1 "/>
+          </div>
+          
         </div>
         <!-- main frame -->
-        <div class="overflow-auto w-5/6">
+        <div class="content overflow-y-auto  overflow-x-hidden">
           <DatasetContainer v-if="is_db_col_selected() == true" class="w-full"></DatasetContainer>
           <DatasetsSummary v-if="is_db_col_selected() == false" class="w-full"></DatasetsSummary>
         </div>
-        
-      </div>
-    </div>
+    </main >
 
-    <div class="h-5 fixed bottom-0 w-full">
+    <div class="h-8 w-full">
       <Footer />
     </div>
      
@@ -71,9 +71,25 @@ export default {
 
 
 <style>
-html, body, #body2
-{
-    height: 100%;
-    min-height: 100%;
+.wrapper {
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  grid-gap: 50px;
 }
+
+.sidebar {
+  grid-column: 1;
+  color: #fff;
+}
+
+.content {
+  grid-column: 2;
+}
+
+  .mainer {
+    overflow: hidden;
+    height: 100vh;
+  }
 </style>

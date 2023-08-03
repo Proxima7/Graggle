@@ -1,6 +1,6 @@
 <template>
     <div class="">
-      <div class="grid grid-cols-1 gap-2">
+      <div class="grid grid-cols-1 gap-0">
         <div  v-for="database in databasestore.get_databases()">          
           <div class="font-semibold mx-2 text-3xl underline mt-4" v-if="datasets_complete[database.database_name] ">{{database.database_name}}</div>
           <div class="grid grid-cols-6 gap-2  ">        

@@ -1,16 +1,12 @@
-from bson import json_util
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
-import copy
 import uvicorn
 from fastapi_models.models import *
-import json
-import utils
-from cron import Cron
-from env_helper import set_env
-from static import Static
+from util import utils
+from util.updater import Updater
+from fastapi_hosting.environment_helper import set_necessary_environment
+from fastapi_hosting.frontend_files_hosting import Static
 from data_access import data_transfer_impl_mongoDB_minioS3
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
 
@@ -33,14 +29,14 @@ app.add_middleware(
 )
 Static.configureStatic(app)
 
-set_env()
+set_necessary_environment()
 dti = data_transfer_impl_mongoDB_minioS3.DataTransferMongoDBMinioS3()
 mdti = data_transfer_impl_mongoDB_minioS3.MetadataTransferMongoDBMinioS3()
 
 @app.on_event("startup")
 async def startup_event():
-    cronjob = Cron(dti, mdti)
-    cronjob.updater()
+    updater_job = Updater(dti, mdti)
+    updater_job.cycling_updat()
 
 @app.get("/")
 def root():
@@ -133,7 +129,9 @@ def get_dataset_comments(db: str, col: str) -> dict:
     return Comments(comments=[comment1, comment2, comment3])
 
 
-
+@app.get(f"/health/live")
+async def health():
+    return {"status": "ok"}
 
 import os
 if __name__ == "__main__":

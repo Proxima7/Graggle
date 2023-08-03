@@ -1,5 +1,5 @@
 import os
 
-def set_env():
+def set_necessary_environment():
     os.environ["APP_PORT"] = "8101"
 

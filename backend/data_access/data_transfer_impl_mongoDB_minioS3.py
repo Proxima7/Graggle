@@ -1,6 +1,6 @@
 from data_access.data_transfer_interface import DataTransferInterface
 from data_access.data_transfer_interface import MetadataTransferInterface
-from data_access.data_transfer_objects import Databases, DatabaseCollections, Datasets
+from data_access.data_transfer_objects import Databases, DatabaseCollections
 from data_access.data_transfer_objects import Document
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
 
@@ -11,7 +11,7 @@ import pymongo
 import json
 from bson.objectid import ObjectId
 import cv2
-import utils
+from util import utils
 import numpy as np
 
 mongodb_con_string = vault_reader.read_value(f"prod_mongodb_con_string_admin", vault="prod")
@@ -167,7 +167,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
     def get_document(self, database: str, collection: str, skip_count: int, filter: str = "") -> Document:
         try:
             query = json.loads(filter)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             query = {}
 
         documents = db_accessor.get_data(database, collection, return_images=True, query=query, doc_count=1,
@@ -176,6 +176,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
             return None
         else:
             del documents[0]["_id"]
+            utils.remove_objects_of_type(documents[0], ObjectId)
             return Document(document=documents[0])
 
     def last_update_date(self, database: str, collection: str) -> str:

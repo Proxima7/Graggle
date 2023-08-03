@@ -3,7 +3,7 @@ import time
 import cv2
 import numpy as np
 
-from utils import average_image_size, create_random_4_3_preview_image, convert_ndarray_to_base_64
+from util.utils import average_image_size, create_random_4_3_preview_image, convert_ndarray_to_base_64
 from data_access.data_transfer_objects import Datasets, DatasetDescriptor
 
 
@@ -84,12 +84,12 @@ def data_by_collection(cron, db, col):
 
     return number_of_documents, size_mb, created, last_update, preview_image
 
-class Cron():
+class Updater():
     def __init__(self, dti, mdti):
         self.dti = dti
         self.mdti = mdti
 
-    def updater(self):
+    def cycling_updat(self):
         thread = threading.Thread(target=collection_metadata_description_updater, args=(self,))
         thread.start()
 

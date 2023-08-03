@@ -117,3 +117,25 @@ def object_to_dict(obj):
         return [object_to_dict(item) for item in obj]
     else:
         return {k: object_to_dict(v) for k, v in obj.__dict__.items()}
+
+
+def remove_objects_of_type(data, obj_type):
+    if isinstance(data, dict):
+        # Iterate over the dictionary keys
+        for key in list(data.keys()):
+            value = data[key]
+            if isinstance(value, obj_type):
+                # Remove the object if it matches the specified type
+                del data[key]
+            else:
+                # Recursively call the function for nested dictionaries
+                remove_objects_of_type(value, obj_type)
+    elif isinstance(data, list):
+        # Iterate over the list elements
+        for item in data:
+            if isinstance(item, obj_type):
+                # Remove the object if it matches the specified type
+                data.remove(item)
+            else:
+                # Recursively call the function for nested dictionaries or lists
+                remove_objects_of_type(item, obj_type)

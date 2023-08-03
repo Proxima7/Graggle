@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full">
-      <div class="grid grid-cols-1 gap-2">
+    <div class="">
+      <div class="grid grid-cols-1 gap-2 overflow-x-hidden">
         <div v-for="database in databasestore.get_databases()" class="bg-secondary py-2 px-4 rounded text-lg font-semibold" :class="{ 'bg-tertiary-900': is_active_database(database.database_name) }" @click="set_selected_database(database.database_name)">{{database.database_name}}
             <ul v-if="is_active_database(database.database_name)" class="mt-2 border-l-4 border-secondary overflow-y-auto max-h-80 overflow-x-hidden">
                 <li v-for="col in database.collection_names" class="py-2 px-2 cursor-pointer text-m text-gray-300" :class="{ 'bg-tertiary-900': isActive(1, 1) }" @click="set_selected_collection(database.database_name, col)">{{ col.slice(0, 22) }} 
