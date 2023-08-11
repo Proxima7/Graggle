@@ -71,12 +71,47 @@ export default {
 
 
 <style>
-.wrapper {
-  margin: 0 auto;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 5fr;
-  grid-gap: 50px;
+
+@media (max-width: 639px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+  }
+}
+
+@media (min-width: 640px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+  }
+}
+@media (min-width: 1024px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 4fr 8fr;
+  }
+}
+@media (min-width: 1600px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 3fr 9fr;
+  }
+}
+@media (min-width: 2500px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2fr 10fr;
+  }
 }
 
 .sidebar {

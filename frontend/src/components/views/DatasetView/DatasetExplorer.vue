@@ -1,36 +1,29 @@
 <template>
     <div class="border-2 shadow rounded pb-2 px-2">
-        <div class="flex p-0.5 gap-x-1 justify-center pb-2">
-            <button v-if="false" @click="reload()" :disabled="records_queried>datasetstore.documents.lenght" 
-                class="w-48 text-gray-600 bg-gray-300 font-bold rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">
-            <font-awesome-icon icon="fa-shuffle" />
-                reload
-            </button>   
+        <div class="flex p-0.5 gap-x-1 justify-center pb-2"> 
             
-            <div class="grid grid-cols-11 gap-0">
-                <div class="col-span-2 "></div>
-                <div class="col-span-7 flex mx-1 justify-left">
-                    <p class="text-3xl font-bold"><small>DATASET FILTER (MongoDB like)</small></p>
+            <div class="grid grid-cols-12 gap-0 text-sm laptop:text-xl desktop:text-2xl 4k:text-3xl">
+                <div class="justify-center col-span-12 flex mx-1 justify-left">
+                    <p class="font-bold">DATASET FILTER (MongoDB like)</p>
                 </div>
-                <div class="col-span-2 "></div>
 
-                <div class="col-span-2 "></div>
-                <div class="col-span-5 flex border-2 rounded mx-1 relative">
+                <div class="max-[1300px]:col-span-12 min-[1300px]:col-span-6 flex border-2 rounded mx-1 relative">
                     <input type="filter" name="filter" id="filter" v-model="filter" class=" block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Type a query: { field: 'value'}"/>
                 </div>
-                <div class="col-span-2 flex p-0.5 gap-x-1 justify-center">
+                <div class="max-[1300px]:col-span-6 min-[1300px]:col-span-3 flex p-0.5 gap-x-1 justify-center">
                     <button @click="resetFilter()" class="w-44 bg-gray-300 font-bold text-gray-700 rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Reset</button>
+                </div>
+                <div class="max-[1300px]:col-span-6 min-[1300px]:col-span-3 flex p-0.5 gap-x-1 justify-center">
                     <button @click="find()" class="w-44 bg-green-900 font-bold text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Find next</button>
                 </div>
-                <div class="col-span-2 "></div>
 
             </div> 
 
         </div>
-        <div class="grid grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 desktop:grid-cols-6 4k:grid-cols-12 max-[800px]:gap-1 min-[800px]:gap-4">
             <img v-for="(dataset_img, index) in datasetstore.data_get_all_image()" 
                     @contextmenu.prevent="showMenu($event)"
-                    class="h-44" 
+                    class="" 
                     :src="dataset_img"
                     @click="click_select(index)"
                     :class="is_selected(index) ? 'opacity-75 border-8 border-red-600' : 'opacity-100'"/>

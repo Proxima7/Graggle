@@ -2,14 +2,16 @@
     <div class="bg-white py-2 px-4 h-full ">
         <!-- tabs: each one is toggable like in the vs code menu-->
         <ul class="flex flex-wrap text-sm font-medium text-center text-gray-300 border-b border-gray-300">
-            <li v-for="tab in tabs" class="mr-2">
+            <li v-for="tab in tabs" class="mx-1">
                 
                 <div 
-                @click="activate(tab.id)" 
-                :class="!tab.active ? 'text-gray-600 hover:text-gray-900' : 'bg-gray-500 text-gray-900 border-primary border-b-2 font-bold'"
-                class="inline-block p-4 bg-gray-300  rounded-t-lg active cursor-pointer">
-                <font-awesome-icon :icon="tab.icon" v-if="tab.id==4"/>    
-                {{tab.title}}
+                    @click="activate(tab.id)" 
+                    :class="!tab.active ? 'text-gray-600 hover:text-gray-900' : 'bg-gray-500 text-gray-900 border-primary border-b-2 font-bold'"
+                    class="inline-block bg-gray-300  rounded-t-lg active cursor-pointer 
+                        text-xs laptop:text-sm desktop:text-lg 4k:text-xl
+                        p-1 laptop:p-2 desktop:p-3 4k:p-3">
+                    <font-awesome-icon :icon="tab.icon" v-if="tab.id==4"/>    
+                    {{tab.title}}
                 
                 </div>
             </li>

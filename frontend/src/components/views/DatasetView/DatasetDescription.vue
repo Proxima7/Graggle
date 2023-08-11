@@ -5,14 +5,19 @@
     <div class="border-2 shadow rounded p-2 w-full">
         <div v-if="!isExpanded" >
             <div class="grid grid-cols-12">
-                <div class="col-span-10 flex">             
-                    <h3 class="font-bold tracking-tight text-4xl">
+                <div class="max-[600px]:col-span-12 min-[600px]:col-span-10">             
+                    <div class="font-bold tracking-tight text-lg laptop:text-2xl desktop:text-3xl 4k:text-4xl">
                         <font-awesome-icon class="px-1" icon="fa-solid fa-maximize" @click="isExpanded = true"/>
-                         Datacard <small>({{ gstore.selected_db }} / {{ gstore.selected_col }})</small>
-                    </h3>
+                         Datacard 
+                    </div>
+                    <div class="align-top">
+                        Database: {{ gstore.selected_db }} <br> 
+                        Collection: {{ gstore.selected_col }})
+                    </div>
                 </div>
-                <div class="col-span-2 flex justify-end">
-                    <img v-if="datasetstore.get_dataset_description() && datasetstore.get_dataset_description().image != ''" :src="datasetstore.get_dataset_description().image" style="max-width: 7rem;" class="rounded-xl shadow-xl ring-1 ring-gray-400/10 "/>
+                <div class="max-[600px]:col-span-6 min-[600px]:col-span-2 flex justify-end">
+                    <img v-if="datasetstore.get_dataset_description() && datasetstore.get_dataset_description().image != ''" :src="datasetstore.get_dataset_description().image" 
+                    class="rounded-xl shadow-xl ring-1 ring-gray-400/10 min-[1000px]:w-36"/>
                 </div>
             </div>
         </div>

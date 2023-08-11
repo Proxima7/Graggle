@@ -1,28 +1,28 @@
 <template>
-  <div class='flex-grow'>
+  <div class='flex-grow text-xs laptop:text-lg desktop:text-xl 4k:text-2xl'>
       <div class="flex p-0.5 gap-x-1 justify-center">
-        <div class="bg-primary text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_home">
+        <div class="bg-primary text-white rounded px-1 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_home">
             <font-awesome-icon icon="fa-home" />
             zoom fit
           </div> 
-        <div class="bg-primary text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_zoom_out">
+        <div class="bg-primary text-white rounded px-1 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_zoom_out">
             <font-awesome-icon icon="fa-minus-circle" />
             zoom out
           </div>
-          <div class="bg-primary text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_zoom_in">
+          <div class="bg-primary text-white rounded px-1 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_zoom_in">
             <font-awesome-icon icon="fa-plus-circle" />
             zoom in
           </div>
-          <div class="bg-primary text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_rotate_left">
+          <div class="bg-primary text-white rounded px-1 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_rotate_left">
             <font-awesome-icon icon="fa-chevron-circle-left" />
             rotate left
           </div>
-          <div class="bg-primary text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_rotate_right">
+          <div class="bg-primary text-white rounded px-1 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_rotate_right">
             <font-awesome-icon icon="fa-chevron-circle-right" />
             rotate right
           </div>
       </div>
-      <div class="w-full h-full"  id="annotorious_container" />
+      <div class="w-full h-full p-0"  id="annotorious_container" />
       <div>use shift+click to draw. Use shift+double click to end polygon.</div>
   </div>
 </template>

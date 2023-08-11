@@ -3,14 +3,16 @@
         <div class="flex flex-col h-full">
             
             <DatasetDescription/>
-            <div class="bg-white py-2 px-2 h-full">
+            <div class="bg-white py-2 h-full">
                 <!-- tabs: each one is toggable like in the vs code menu-->
                 <ul class="flex flex-wrap text-sm font-medium text-center text-gray-300 border-b border-gray-300">
                     <li v-for="tab in tabs" class="mr-2">
                         <div 
                         @click="activate(tab.id)" 
                         :class="!tab.active ? 'text-gray-600 hover:text-gray-900' : ' bg-gray-500 text-gray-900 border-primary border-b-2 font-bold'"
-                        class="inline-block py-2 px-6 bg-gray-300  rounded-t-lg active cursor-pointer">
+                        class="inline-block bg-gray-300  rounded-t-lg active cursor-pointer
+                                text-xs laptop:text-sm desktop:text-lg 4k:text-xl
+                                p-1 laptop:p-2 desktop:p-3 4k:p-3">
                             {{tab.title}}
                         
                         </div>

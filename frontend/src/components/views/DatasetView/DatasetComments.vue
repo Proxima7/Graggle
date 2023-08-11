@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col justify-center items-stretch">
-      <h2 class="text-lg font-semibold mb-4 mx-auto">Comments</h2>
-      <div class="w-full">
-        <div v-for="comment in commentsStore.comments" :key="comment.id" class="border rounded-md p-4 mb-4 w-full ">
+      <h2 class=" text-lg laptop:text-xl desktop:text-2xl 4k:text-3xl font-semibold mb-4 mx-auto font-semibold mb-4 mx-auto">Comments</h2>
+      <div class="w-full text-sm laptop:text-lg desktop:text-xl 4k:text-xl">
+        <div v-for="comment in commentsStore.comments" :key="comment.id" class="border rounded-md p-4 mb-4 w-full text-sm laptop:text-lg desktop:text-xl 4k:text-xl">
           <div class="text-gray-700 font-bold">{{ comment.person }}</div>
           <div class="text-gray-600">{{ comment.text }}</div>
         </div>
