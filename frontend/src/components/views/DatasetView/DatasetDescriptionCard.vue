@@ -28,14 +28,18 @@
 
         <!-- real card -->
         <div v-else>
-            <div class="grid grid-cols-2 gap-4 p-2  rounded">
-                <div class="p-0 flex justify-end">
-                    <img v-if="dataset_description.image != ''" :src="dataset_description.image" style="max-width: 15rem;" class="w-full rounded-xl shadow-xl ring-1 ring-gray-400/10" alt="Product screenshot"/>
-                    <img v-else src='../../../assets/placeholder_image.jpg' style="max-width: 15rem;" class="w-full rounded-xl shadow-xl ring-1 ring-gray-400/10"  alt="Product screenshot"/>
+            <div class="grid grid-cols-2 gap-1 p-0.5 rounded">
+                <div class="col-span-2 laptop:col-span-1 desktop:col-span-1 4k:col-span-1 p-0 flex justify-center  ">
+                    <img v-if="dataset_description.image != ''" :src="dataset_description.image" class="
+                    max-w-[240px]  
+                    max-h-[240px]   
+                    rounded-xl shadow-xl ring-1 ring-gray-400/10" alt="Product screenshot"/>
+                    <img v-else src='../../../assets/placeholder_image.jpg'  class="max-w-[50px] rounded-xl shadow-xl ring-1 ring-gray-400/10"  alt="Product screenshot"/>
                     
                 </div>
-                <div class="p-0">
-                    <div class="w-full p-2">
+                <div class="col-span-2 laptop:col-span-1 desktop:col-span-1 4k:col-span-1 
+                    p-0 text-xs laptop:text-sm desktop:text-lg 4k:text-xl">
+                    <div class="w-full p-0.5">
                         <DatasetDescriptionCardEntry icon="fa-star" title=" Usability">
                             {{ dataset_description.descriptors.usability }}
                         </DatasetDescriptionCardEntry>

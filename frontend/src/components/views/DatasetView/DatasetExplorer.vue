@@ -6,17 +6,14 @@
                 <div class="justify-center col-span-12 flex mx-1 justify-left">
                     <p class="font-bold">DATASET FILTER (MongoDB like)</p>
                 </div>
-
-                <div class="max-[1300px]:col-span-12 min-[1300px]:col-span-6 flex border-2 rounded mx-1 relative">
-                    <input type="filter" name="filter" id="filter" v-model="filter" class=" block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Type a query: { field: 'value'}"/>
+                <div class="col-span-12 
+                    flex flex-col laptop:flex-row desktop:flex-row 4k:flex-row justify-center max-[1024px]:justify-items-stretch ">                
+                    <div class="border-2 rounded m-1 relative min-w-[300px] laptop:min-w-[300px] desktop:min-w-[750px] 4k:min-w-[1000px]">
+                        <input type="filter" name="filter" id="filter" v-model="filter" class="min-w-[300px] laptop:min-w-[300px] desktop:min-w-[850px] 4k:min-w-[1000px] border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Type a query: { field: 'value'}"/>
+                    </div>
+                    <button @click="resetFilter()" class="min-[1024px]:w-44 bg-gray-300 font-bold text-gray-700 rounded m-1 px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Reset</button>
+                    <button @click="find()" class="min-[1024px]:w-44 bg-green-900 font-bold text-white rounded m-1 px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Find next</button>
                 </div>
-                <div class="max-[1300px]:col-span-6 min-[1300px]:col-span-3 flex p-0.5 gap-x-1 justify-center">
-                    <button @click="resetFilter()" class="w-44 bg-gray-300 font-bold text-gray-700 rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Reset</button>
-                </div>
-                <div class="max-[1300px]:col-span-6 min-[1300px]:col-span-3 flex p-0.5 gap-x-1 justify-center">
-                    <button @click="find()" class="w-44 bg-green-900 font-bold text-white rounded px-4 py-2 hover:bg-secondary focus:outline-none focus:shadow-outline" id="ann_nav_btn_prev">Find next</button>
-                </div>
-
             </div> 
 
         </div>
@@ -85,6 +82,19 @@ export default {
         watch(() => this.gstore.selected_col, (newValue, oldValue) => {
             this.reload()
         });
+
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 640) {
+            this.records_max = 12
+        } else if (screenWidth < 1024) {
+            this.records_max = 18
+        } else if (screenWidth < 1600) {
+            this.records_max = 24
+        }else if (screenWidth < 2500) {
+            this.records_max = 36
+        } else {
+            this.records_max = 48
+        }
     },   
     unmounted() {
         this.visible = false
