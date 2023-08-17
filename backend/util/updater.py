@@ -8,6 +8,13 @@ from data_access.data_transfer_objects import Datasets, DatasetDescriptor
 
 
 def collection_metadata_description_updater(cron):
+    """
+    Main routine to update changing dataset description values in a defined circular sheduled time.
+    Determines a subset of the dataset description to allow queries on dataset and collection names.
+
+    Args:
+        cron: Updater object that holds the data storage implementation
+    """
     run = 0
     while True:
         datasetdescriptors = []
@@ -46,9 +53,19 @@ def collection_metadata_description_updater(cron):
             number_of_documents, size_mb, created, last_update, preview_image = data_by_collection(cron, db, col)
             cron.mdti.update_dataset_description(db, col, number_of_documents, size_mb, created, last_update)
 
-        time.sleep(8640)
+        time.sleep(86400)
 
 def data_by_collection(cron, db, col):
+    """
+    Determines per dataset informations like images für previews, timestamps, amounts and sizes
+    Args:
+        cron: Updater object that holds datastorage
+        db: database
+        col: collection
+
+    Returns: number_of_documents, size_mb, created, last_update, preview_image
+
+    """
     number_of_documents = cron.dti.count_documents(db, col)
 
     size_mb = 0
@@ -85,6 +102,7 @@ def data_by_collection(cron, db, col):
     return number_of_documents, size_mb, created, last_update, preview_image
 
 class Updater():
+    """Start fo endless running thread to hold dataset description up-to-date"""
     def __init__(self, dti, mdti):
         self.dti = dti
         self.mdti = mdti

@@ -25,7 +25,7 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
     def __init__(self):
         pass
 
-    def all_dataset_descriptions(self, database: str, collection: str) -> DatasetDescription:
+    def all_dataset_descriptions(self) -> DatasetDescription:
         query = {}
         datas = db_accessor.get_data("graggle", "dataset_descriptions", return_images=True, query=query)
         return datas
@@ -110,7 +110,7 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         except Exception as e:
             print(e)
 
-    def create_dataset_description(self, dataset_description: DatasetDescription):
+    def insert_dataset_description(self, dataset_description: DatasetDescription):
         dataset_description = utils.object_to_dict(dataset_description)
         if "database" in dataset_description['descriptors']:
             dataset_description['descriptors'].pop('database')
@@ -136,6 +136,8 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
                 dataset_description["image"] = preview_image
             except Exception as e:
                 return []
+        else:
+            dataset_description["image"] = utils.convert_base_64_to_ndarray(dataset_description["image"])
 
         inserted_ids = db_accessor.insert_data(dataset_description, "graggle", "dataset_descriptions")
         return inserted_ids

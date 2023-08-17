@@ -1,6 +1,8 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+import os
+import cv2
 import uvicorn
 from fastapi_models.models import *
 from util import utils
@@ -10,11 +12,11 @@ from fastapi_hosting.frontend_files_hosting import Static
 from data_access import data_transfer_impl_mongoDB_minioS3
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
 
-# Start Service
+# Start Service + Description
 app = FastAPI(
-    title="ProductText",
-    description="Text based classification of products",
-    version="0.0.1",
+    title="Graggle Cloud Backend",
+    description="Graggle Cloud Backend for frontend provision and database/data-storage connection",
+    version="0.1.0",
     root_path=""
 )
 
@@ -27,28 +29,56 @@ app.add_middleware(
     allow_headers=['*'],
     max_age=3600
 )
+
+# Provision of Frontend delivered by the Backend
 Static.configureStatic(app)
 
+# Environmeht configuration
 set_necessary_environment()
+
+# data-storage implementation
+# minio s3 (amazon s3 like) for image data
+# + mongodb for image references and metadata
 dti = data_transfer_impl_mongoDB_minioS3.DataTransferMongoDBMinioS3()
 mdti = data_transfer_impl_mongoDB_minioS3.MetadataTransferMongoDBMinioS3()
 
 @app.on_event("startup")
 async def startup_event():
+    # run the dataset metadata update job
+    # at startup and then every 24 hour
+    # updates e.g. number of images per dataset, calc. dataset size, provides preview image, aso.
     updater_job = Updater(dti, mdti)
     updater_job.cycling_updat()
 
 @app.get("/")
 def root():
+    """
+    Root endpoint of th webserver
+
+    Returns: plain-text information the the API doc can be found
+    """
     return {"Graggle root - API available under /docs"}
 
 @app.get("/databases")
 def get_databases_with_collections() -> dict:
+    """
+    Endpoint to get all available datasets.
+
+    Returns: List with all available datasets
+    """
     databases = dti.get_databases()
     return databases
 
 @app.post("/datasets/filter")
 def get_databases_filtered(data: PostFilter) -> dict:
+    """
+    Endpoint to filter datasets.
+    Args:
+        data: PostFilter containing the filter string
+
+    Returns: List of datasets matching to the filter criteria
+
+    """
     datasets_details = mdti.get_datasets_details()
 
     if data.filter != "":
@@ -67,10 +97,21 @@ def get_databases_filtered(data: PostFilter) -> dict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return datasets_details
 
-import cv2
-@app.get("/dataset/document/{db}/{col}/{number}/{filter}")
-def get_document_of_database_and_collection_with_filter(db: str, col: str, number: int, filter: str, low_resolution: bool = False) -> dict:
-    filtered_document = dti.get_document(db, col, number, filter)
+@app.get("/dataset/document/{db}/{col}/{skip_count}/{filter}")
+def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_count: int, filter: str, low_resolution: bool = False) -> dict:
+    """
+    Endpoint to query/filter for a specific document based on the parameters.
+
+    Args:
+        db: database (depends on implementation)
+        col: collection (depends on implementation)
+        skip_count: number of documents to skip
+        filter: filter in collection
+        low_resolution: boolean to control if original sized or reduced sized image should be returned
+
+    Returns: Single document that matches the incoming arguments
+    """
+    filtered_document = dti.get_document(db, col, skip_count, filter)
     if filtered_document is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -88,13 +129,30 @@ def get_document_of_database_and_collection_with_filter(db: str, col: str, numbe
 
 @app.get("/dataset/description/{db}/{col}")
 def get_dataset_description(db: str, col: str) -> dict:
+    """
+    Endpoint to get the dataset description based on the parameter.
+
+    Args:
+        db: database (depends on implementation)
+        col: collection (depends on implementation)
+
+    Returns: Detailed dataset description
+
+    """
     dsc = mdti.get_dataset_description(db, col)
     if dsc is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return dsc
 
 @app.post("/dataset/description")
-def create_dataset_description(data: PostDataSetDesc) -> dict:
+def insert_dataset_description(data: PostDataSetDesc) -> dict:
+    """
+    Endpoint to add a dataset description.
+
+    Args:
+        data: Dataset description information
+
+    """
     dataset_descriptor = DatasetDescriptor(database=data.database,
                                            collection=data.collection,
                                            number_of_documents="0",
@@ -111,30 +169,46 @@ def create_dataset_description(data: PostDataSetDesc) -> dict:
                                              dataset_display_title=data.dataset_display_title,
                                              short_description=data.short_description,
                                              dataset_description=data.dataset_description,
-                                             image=utils.convert_base_64_to_ndarray(data.image) if data.image != "" else "",
+                                             image=data.image if data.image != "" else "",
                                              generated=False,
                                              descriptors=dataset_descriptor)
 
-    ids = mdti.create_dataset_description(dataset_description)
+    ids = mdti.insert_dataset_description(dataset_description)
     if len(ids) != 0:
-        return {"status": "created"}
+        return Response(status_code=201, content=None)
     else:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="creation failure")
 
 @app.get("/dataset/comments/{db}/{col}")
 def get_dataset_comments(db: str, col: str) -> dict:
-    comment1 = Comment(id=1, person="Mr. Lorem Ipsum", text="Very good dataset!")
-    comment2 = Comment(id=2, person="Mr. Lorem Ipsum", text="Sometimes is the image quality a little bit bad")
-    comment3 = Comment(id=3, person="Mr. Lorem Ipsum", text="Used in the Object Detection Model V5 for SpecialCases")
+    """
+    Endpoint to get the comments for a dataset
+    Args:
+        db: database (depends on implementation)
+        col: collection (depends on implementation)
+
+    Returns: List of comments with comment creators
+
+    """
+    comment1 = Comment(id=1, person="Mr. Lorem Ipsum", text="Comment no.1")
+    comment2 = Comment(id=2, person="Mr. Lorem Ipsum", text="Comment no.2")
+    comment3 = Comment(id=3, person="Mr. Lorem Ipsum", text="Comment no.3")
     return Comments(comments=[comment1, comment2, comment3])
 
 
 @app.get(f"/health/live")
 async def health():
+    """
+    Health endpoint for webservice lifetime check
+
+    Returns: Is alive response
+    """
     return {"status": "ok"}
 
-import os
 if __name__ == "__main__":
+    """
+        Main start of webserver
+    """
     my_port = int(os.getenv("APP_PORT"))
     my_root_path = os.getenv("ENDPOINT_PREFIX")
     if my_root_path and len(my_root_path) > 0:
