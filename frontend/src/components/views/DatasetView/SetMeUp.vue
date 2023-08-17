@@ -1,34 +1,35 @@
 <template>
     <div class="flex flex-col justify-center items-stretch">
-      <h2 class="text-lg font-semibold mb-4 mx-auto">Set-Me-Up</h2> 
+      <h2 class="text-lg laptop:text-xl desktop:text-2xl 4k:text-3xl font-semibold mb-4 mx-auto">Set-Me-Up</h2> 
 
-      <div class="grid grid-cols-7 py-2 px-4 rounded border-2">
-        <div class="col-span-1 flex items-center justify-start text-lg font-semibold">
-          Installation:
+      <div class="text-sm laptop:text-lg desktop:text-xl 4k:text-xl">
+        <div class="grid max-[1400px]:grid-cols-6 min-[1400px]:grid-cols-7 py-2 px-4 rounded border-2">
+          <div class="col-span-1 flex items-center justify-start  font-semibold">
+            Installation:
+          </div>
+          <div class="col-span-6 items-center">
+            <highlightjs language='python' code="pip install database_accessor" />
+          </div>
         </div>
-        <div class="col-span-6 items-center">
-          <highlightjs language='python' code="pip install database_accessor" />
+
+        <div class="grid max-[1400px]:grid-cols-6 min-[1400px]:grid-cols-7 py-2 px-4 rounded border-2">
+          <div class="max-[1400px]:col-span-6 min-[1400px]:col-span-1 flex items-center justify-start font-semibold">
+            Environment variables:
+          </div>
+          <div class="col-span-6 items-center">
+            <highlightjs language='markdown' :code="envvar" />
+          </div>
+        </div>
+
+        <div class="grid max-[1400px]:grid-cols-6 min-[1400px]:grid-cols-7 py-2 px-4 rounded border-2">
+          <div class="col-span-1 flex items-center justify-start font-semibold">
+            Usage:
+          </div>
+          <div class="col-span-6 items-center">
+            <highlightjs language='python' :code="getUsage()" />
+          </div>
         </div>
       </div>
-
-      <div class="grid grid-cols-7 py-2 px-4 rounded border-2">
-        <div class="col-span-1 flex items-center justify-start text-lg font-semibold">
-          Environment variables:
-        </div>
-        <div class="col-span-6 items-center">
-          <highlightjs language='markdown' :code="envvar" />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-7 py-2 px-4 rounded border-2">
-        <div class="col-span-1 flex items-center justify-start text-lg font-semibold">
-          Usage:
-        </div>
-        <div class="col-span-6 items-center">
-          <highlightjs language='python' :code="getUsage()" />
-        </div>
-      </div>
-
 
     </div>
   </template>

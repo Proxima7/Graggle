@@ -1,9 +1,11 @@
 <template>
-    <div class="w-full">
-      <div class="grid grid-cols-1 gap-2">
-        <div v-for="database in databasestore.get_datasets()" class="bg-secondary py-2 px-4 rounded text-lg font-semibold" :class="{ 'bg-tertiary-900': is_active_database(database.name) }" @click="set_selected_database(database.name)">{{database.name}}
-            <ul v-if="is_active_database(database.name)" class="mt-2 border-l-4 border-secondary overflow-y-auto max-h-80 overflow-x-hidden">
-                <li v-for="col in database.collections" class="py-2 px-2 cursor-pointer text-m text-gray-300" :class="{ 'bg-tertiary-900': isActive(1, 1) }" @click="set_selected_collection(database.name, col)">{{ col.slice(0, 22) }} 
+    <div class="">
+      <div class="grid grid-cols-1 gap-2 overflow-x-hidden">
+        <div v-for="database in databasestore.get_databases()" 
+              class="bg-secondary py-2 px-4 rounded font-semibold text-xs laptop:text-base desktop:text-lg 4k:text-xl" 
+              :class="{ 'bg-tertiary-900': is_active_database(database.database_name) }" @click="set_selected_database(database.database_name)">{{database.database_name}}
+            <ul v-if="is_active_database(database.database_name)" class="mt-2 border-l-4 border-secondary overflow-y-auto max-h-80 overflow-x-hidden">
+                <li v-for="col in database.collection_names" class="py-2 px-2 cursor-pointer text-m text-gray-300" :class="{ 'bg-tertiary-900': isActive(1, 1) }" @click="set_selected_collection(database.database_name, col)">{{ col.slice(0, 22) }} 
                 </li>
             </ul>
           </div>

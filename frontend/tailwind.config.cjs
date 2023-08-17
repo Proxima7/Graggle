@@ -27,6 +27,19 @@ module.exports = {
         '90vh': '90vh'
       }
     },
+    screens: {
+      'tablet': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'laptop': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'desktop': '1600px',
+      // => @media (min-width: 1600px) { ... }
+
+      '4k': '2500px',
+      // => @media (min-width: 2000px) { ... }
+    },
 
   },
   plugins: [],

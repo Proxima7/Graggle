@@ -1,11 +1,11 @@
 <template>
-    <div class="">
-      <div class="grid grid-cols-1 gap-2">
-        <div  v-for="database in databasestore.get_datasets()">          
-          <div class="font-semibold mx-2 text-3xl underline mt-4" v-if="datasets_complete[database.name] ">{{database.name}}</div>
-          <div class="grid grid-cols-6 gap-2  ">        
-            <DatasetOverviewCard v-for="dataset in datasets_complete[database.name]" :key="dataset.collection" :dataset="dataset" 
-            class="flex flex-col m-2 border-2 shadow rounded"/>
+    <div class="max-[800px]:pl-1 min-[800px]:pl-8 max-[800px]:pr-1 min-[800px]:pr-8">
+      <div class="grid grid-cols-1 gap-0">
+        <div  v-for="database in databasestore.get_databases()">          
+          <div class="font-semibold mx-2 text-lg tablet:text-xl laptop:text-2xl desktop:text-3xl 4k:text-3xl  underline mt-4" v-if="datasets_complete[database.database_name] ">{{database.database_name}}</div>
+          <div class="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 desktop:grid-cols-6 4k:grid-cols-10  gap-2">        
+            <DatasetOverviewCard v-for="dataset in datasets_complete[database.database_name]" :key="dataset.collection" :dataset="dataset" 
+            class="flex flex-col max-[800px]:m-0 min-[800px]:m-2 border-2 shadow rounded"/>
           </div>
         </div>    
       </div>

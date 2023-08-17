@@ -37,7 +37,7 @@
         this.datasets_complete = []
         this.datasets_queried = 0
         var dataset_overview_callback = function (resp) {
-            that.datasets = resp.data;
+            that.datasets = resp.data.datasetdescriptors;
             if(query_id == that.query_id){
               for(let i=0; i<that.datasets.length; i++){
                 let db = that.datasets[i]["database"]
@@ -46,7 +46,7 @@
               }
             }            
         };      
-        requestHandler.get_datasets(dataset_overview_callback, filter);
+        requestHandler.get_datasets_filtered(dataset_overview_callback, filter);
       },
       async loadDataset(db, col, query_id) {
             if(this.datasets_queried>=24){

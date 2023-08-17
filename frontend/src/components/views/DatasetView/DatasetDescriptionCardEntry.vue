@@ -6,15 +6,7 @@
         <div class="p-0">
             <slot></slot>
         </div>
-    </div>
-
-    <!--<div class="flex-row">
-        <div class="w-full font-bold">
-            <font-awesome-icon :icon=icon />
-            {{ title }}
-        </div>
-        <slot></slot>
-    </div>-->
+    </div>   
 </template>
 
 <script>

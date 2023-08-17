@@ -1,5 +1,5 @@
 <template>
-    <div class="relative"
+    <div class="relative "
             @mouseover="showDescription = true" @mouseleave="showDescription = false"
             @click="selectDataset(dataset)">
         <!-- OVERLAY -->
@@ -8,12 +8,12 @@
         </div>
 
         <!-- DATASET -->
-        <img :src="dataset.image" class="h-64 object-cover m-2 rounded">
+        <img :src="dataset.image" class=" object-cover m-0.5 rounded">
         <span v-if="dataset.generated==false" class="absolute top-5 right-5 h-5 w-5 bg-green-500 rounded-full"></span>
         <span v-else class="absolute top-5 right-5 h-5 w-5 bg-red-500 rounded-full"></span>
-        <div class="bg-white p-4">
-        <h3 class="font-semibold text-lg">{{ fixed_titel }}</h3>
-        <p class="text-gray-500">{{ dataset.collection }}</p>
+        <div class="bg-white p-1 min-[1000px]:p-2">
+          <h3 class="font-semibold text-xs tablet:text-xs laptop:text-sm desktop:text-sm 4k:text-sm">{{ fixed_titel }}</h3>
+          <p class="text-gray-500 text-xs tablet:text-xs laptop:text-sm desktop:text-sm 4k:text-sm">{{ dataset.collection }}</p>
         </div>
     </div>
   </template>

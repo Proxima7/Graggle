@@ -94,15 +94,15 @@ export const useDatasetStore = defineStore('dataset', {
               that.documents_images = []
           } 
 
-          let document = resp.data
+          let document = resp.data.document
 
           // create image url usable in anatorious
-          if ('image' in resp.data){
-              that.documents_images.push(Helper.base64_to_url(resp.data['image']))                
+          if ('image' in resp.data.document){
+              that.documents_images.push(Helper.base64_to_url(resp.data.document['image']))                
               delete document['image']
           }
-          if ('image_data' in resp.data){
-              that.documents_images.push(Helper.base64_to_url(resp.data['image_data']))                
+          if ('image_data' in resp.data.document){
+              that.documents_images.push(Helper.base64_to_url(resp.data.document['image_data']))                
               delete document['image_data']
           }           
           
@@ -129,7 +129,7 @@ export const useDatasetStore = defineStore('dataset', {
       if ('loading' in that.documents[0]) {
           number=0
       }
-      requestHandler.get_dataset(data_callback, data_callback_error, db, col, number, this.documents_filter || "{}", this.low_resolution);       
+      requestHandler.get_dataset_document(data_callback, data_callback_error, db, col, number, this.documents_filter || "{}", this.low_resolution);       
     },
 
     // --
@@ -145,9 +145,9 @@ export const useDatasetStore = defineStore('dataset', {
       var datasets = null
 
       var dataset_overview_callback = function (resp) {
-        datasets = resp.data;              
+        datasets = resp.data.datasetdescriptors;              
       }
-      await requestHandler.get_datasets(dataset_overview_callback, filter);
+      await requestHandler.get_datasets_filtered(dataset_overview_callback, filter);
       return datasets
     },
     

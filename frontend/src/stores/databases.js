@@ -8,12 +8,12 @@ export const useDatabasesStore = defineStore('databases', {
   actions: {
     load() {
       var that = this;
-      var get_datasets_callback = function(resp) {
-          that.datasets = resp.data;
+      var get_databases_callback = function(resp) {
+          that.datasets = resp.data.databases;
       }
-      requestHandler.get_databases(get_datasets_callback);
+      requestHandler.get_databases(get_databases_callback);
     },
-    get_datasets() {
+    get_databases() {
       return this.datasets
     }
   }

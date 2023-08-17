@@ -2,13 +2,13 @@
     <div class="w-full">
       <div class="grid grid-cols-1 gap-2 ">
         <div v-for="bookmark in bookmarks" class="bg-secondary py-2 px-2 rounded" @click="set_selected_collection(bookmark.database, bookmark.collection)">
-          <div class="grid grid-cols-3 gap-2 ">
+          <div class="grid max-[1000px]:grid-cols-1 min-[1000px]:grid-cols-3 gap-2 ">
             <div class="flex items-center justify-center">
-              <img v-if="bookmark.image!=''" :src="bookmark.image" class="rounded mx-auto">
+              <img v-if="bookmark.image!=''" :src="bookmark.image" class="rounded mx-auto ">
             </div>
             <div class="">
-              <div class="font-semibold text-lg">{{ bookmark.title }}</div>
-              <div class="text-gray-500 text-xs">{{ bookmark.collection }}</div>
+              <div class="font-semibold max-[1000px]:text:sm min-[1000px]text-lg">{{ bookmark.title }}</div>
+              <div class="text-gray-500 text-xs min-[1000px]:col-span-2">{{ bookmark.collection }}</div>
             </div>
           </div>
         </div >

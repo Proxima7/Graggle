@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full">
-      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded text-lg font-semibold">
+    <div class="w-full text-xs tablet:text-sm laptop:text-lg desktop:text-xl 4k:text-2xl">
+      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded font-semibold">
         <div class="col-span-1 flex items-center justify-end">
           <font-awesome-icon class="px-1" icon="fa-solid fa-file-import" />
         </div>
@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded text-lg font-semibold mt-2">
+      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded font-semibold mt-2">
         <div class="col-span-1 flex items-center justify-end">
           <font-awesome-icon class="px-1" icon="fa-solid fa-sliders" />
         </div>
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded text-lg font-semibold mt-2">
+      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded font-semibold mt-2">
         <div class="col-span-1 flex items-center justify-end">
           <font-awesome-icon class="px-1" icon="fa-solid fa-code-pull-request"/>
         </div>
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded text-lg font-semibold mt-2">
+      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded font-semibold mt-2">
         <div class="col-span-1 flex items-center justify-end">
           <font-awesome-icon class="px-1" icon="fa-solid fa-language"/>
         </div>
@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded text-lg font-semibold mt-2">
+      <div class="grid grid-cols-5  bg-secondary py-2 px-4 rounded font-semibold mt-2">
         <div class="col-span-1 flex items-center justify-end">
           <font-awesome-icon class="px-1" icon="fa-solid fa-book-open"/>
         </div>
