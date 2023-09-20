@@ -44,6 +44,7 @@ import Options from './Options.vue';
 import DatasetList from './DatasetList.vue';
 import BookmarkList from './BookmarkList.vue';
 import Filters from './Filters.vue';
+import BookmarkGroupList from './BookmarkGroupList.vue'; 
 
 export default {
   name: 'Tagging',
@@ -56,11 +57,12 @@ export default {
       menu_items: [
         {icon: 'fa-database', active: true, title: 'Datasets', comp: "DatasetList"},
         {icon: 'fa-bookmark', active: false, title: 'Bookmarks', comp: "BookmarkList"},
+        {icon: 'fa-object-ungroup', active: false, title: 'Bookmark Groups', comp: "BookmarkGroupList"},
         {icon: 'fa-filter', active: false, title: 'Filters', comp: "Filters"},
         {icon: 'fa-bars', active: false, title: 'Options', comp: "Options"},
       ],
     }
-  },
+  }, 
   methods: {
     menu_btn_click (item) {
       // do nothing if selected item is already active
@@ -106,7 +108,8 @@ export default {
     DatasetList,
     BookmarkList,
     Filters,
-    Options
+    Options,
+    BookmarkGroupList
   }
 }
 </script>

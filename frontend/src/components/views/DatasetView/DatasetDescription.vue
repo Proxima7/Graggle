@@ -54,8 +54,8 @@
                             <div class="w-1/2 flex justify-end">
                                 <p class="text-ml laptop:text-xl desktop:text-2xl 4k:text-3xl font-bold tracking-tight">
                                     <font-awesome-icon class="px-1" icon="fa-solid fa-share-nodes" @click='share()'/>
-                                    <font-awesome-icon v-if="bookmarked==false" class="px-1" icon="fa-regular fa-bookmark" @click='bookmark()'/>
-                                    <font-awesome-icon v-if="bookmarked==true" class="px-1" icon="fa-solid fa-bookmark" @click='unbookmark()'/>
+                                    <font-awesome-icon v-if="bookmarked==false" class="px-1" icon="fa-regular fa-bookmark" @click='bookmark()' @contextmenu="bookmarkgroups($event)"/>
+                                    <font-awesome-icon v-if="bookmarked==true" class="px-1" icon="fa-solid fa-bookmark" @click='unbookmark()' @contextmenu="bookmarkgroups($event)"/>
                                     <font-awesome-icon class="px-1" icon="fa-solid fa-comments" @click='comments()'/>
                                     <font-awesome-icon class="px-1" icon="fa-regular fa-pen-to-square" />
                                 </p>
@@ -82,7 +82,9 @@
                 </div>
             </div>
 
-            <DatasetAddDialog :showDialog=dataset_add_dialog_show @update:showDialog="dialog_finished"></DatasetAddDialog>
+            <DatasetAddDialog :showDialog=dataset_add_dialog_show @update:showDialog="add_dialog_finished"></DatasetAddDialog>
+
+            <BookmarkGroupDialog :showDialog=bookmark_group_dialog_show @update:showDialog="bookmark_group_dialog_finished"></BookmarkGroupDialog>
         </div>
     </div>
 
@@ -97,11 +99,13 @@ import { useDatasetStore } from '@/stores/dataset'
 import { Bookmark } from "../../Helpers/Bookmarks.js"
 import { watch } from 'vue'
 import DatasetAddDialog from "./DatasetAddDialog.vue"
+import BookmarkGroupDialog from "./BookmarkGroupDialog.vue"
 
 export default {
     data () {
         return {
             dataset_add_dialog_show: false,
+            bookmark_group_dialog_show: false,
             bookmarked: false,
             gstore: useGeneralStore(),
             datasetstore: useDatasetStore(),
@@ -119,6 +123,7 @@ export default {
         });
     },     
     methods: {
+        
         async share(){
             if (true) {               
                 try {
@@ -148,12 +153,19 @@ export default {
         isbookmarked(){
             return Bookmark.isbookmarked(this.gstore) 
         },
+        bookmarkgroups: function(e) {
+            this.bookmark_group_dialog_show = !this.bookmark_group_dialog_show
+            e.preventDefault();
+        },
         reset(complete){
             if(complete){
                 this.bookmarked = this.isbookmarked()
             }            
         },
-        dialog_finished(){
+        bookmark_group_dialog_finished(){
+            this.bookmark_group_dialog_show = false
+        },        
+        add_dialog_finished(){
             this.dataset_add_dialog_show = false
             this.datasetstore.load_dataset_description()
         },
@@ -164,7 +176,8 @@ export default {
     components: { 
         DatasetDescriptionCard,
         DatasetAddDialog,
-        LoadingOverlay
+        LoadingOverlay,
+        BookmarkGroupDialog
     }
 }
 </script>

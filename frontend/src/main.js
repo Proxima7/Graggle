@@ -16,7 +16,7 @@ import {
     faHome, faChevronLeft, faChevronRight, faChevronCircleRight, faChevronCircleLeft, faPlusCircle, faMinusCircle,
     faStar, faHardDrive, faFile, faVectorSquare, faCalendarCheck, faCalendarPlus, faCirclePlus, faImage, faCheck, 
     faComments, faShareNodes, faXmark, faFilter, faMaximize, faMinimize, faShuffle,
-    faSliders, faCodePullRequest, faFileImport, faCode, faLanguage, faBookOpen
+    faSliders, faCodePullRequest, faFileImport, faCode, faLanguage, faBookOpen, faObjectUngroup
   } from '@fortawesome/free-solid-svg-icons'
 
 import { 
@@ -24,6 +24,7 @@ import {
   } from '@fortawesome/free-regular-svg-icons'
 
 /* add icons to the library */
+library.add(faObjectUngroup)
 library.add(faUser)
 library.add(faDatabase)
 library.add(faSearch)

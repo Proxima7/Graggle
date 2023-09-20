@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import cv2
 import uvicorn
+import base64
 from fastapi_models.models import *
 from util import utils
 from util.updater import Updater
@@ -97,8 +98,8 @@ def get_databases_filtered(data: PostFilter) -> dict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return datasets_details
 
-@app.get("/dataset/document/{db}/{col}/{skip_count}/{filter}")
-def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_count: int, filter: str, low_resolution: bool = False) -> dict:
+@app.get("/dataset/document/{db}/{col}/{skip_count}/{base64_filter}")
+def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_count: int, base64_filter: str, low_resolution: bool = False) -> dict:
     """
     Endpoint to query/filter for a specific document based on the parameters.
 
@@ -106,11 +107,12 @@ def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_
         db: database (depends on implementation)
         col: collection (depends on implementation)
         skip_count: number of documents to skip
-        filter: filter in collection
+        base64_filter: filter in collection (base64 encoded because of special chars)
         low_resolution: boolean to control if original sized or reduced sized image should be returned
 
     Returns: Single document that matches the incoming arguments
     """
+    filter = base64.b64decode(base64_filter).decode('utf-8')
     filtered_document = dti.get_document(db, col, skip_count, filter)
     if filtered_document is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

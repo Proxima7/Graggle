@@ -2,7 +2,7 @@
     <!--
         Data Card
     -->
-    <div class="grid grid-cols-6 gap-2 grid-rows-auto border-2 shadow rounded p-2 mt-2">
+    <div class="grid grid-cols-6 gap-2 grid-rows-auto border-2 shadow rounded p-2 mt-0">
         <!--
             Explorer + prev/next
         -->

@@ -8,6 +8,7 @@ from database_accessor.utils import vault_reader
 from database_accessor import get_db_accessor
 
 import pymongo
+import ast
 import json
 from bson.objectid import ObjectId
 import cv2
@@ -167,11 +168,21 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
         return Databases(databases=dbs)
 
     def get_document(self, database: str, collection: str, skip_count: int, filter: str = "") -> Document:
-        try:
-            query = json.loads(filter)
-        except json.JSONDecodeError as e:
-            query = {}
+        #parsed_filter = json.loads(filter)
+        if filter == {}:
+            parsed_filter = filter
+        else:
+            try:
+                parsed_filter = ast.literal_eval(filter)
+            except Exception as e:
+                print(f"Exception when creating query for pymongo with error: {e}")
+                parsed_filter = {}
 
+        # manuelly create the ObjectId
+        if '_id' in parsed_filter:
+            parsed_filter['_id'] = ObjectId(parsed_filter['_id'])
+
+        query = parsed_filter
         documents = db_accessor.get_data(database, collection, return_images=True, query=query, doc_count=1,
                                          skip_count=skip_count, random_sample=True)
         if len(documents) == 0:

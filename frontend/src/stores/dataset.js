@@ -129,7 +129,9 @@ export const useDatasetStore = defineStore('dataset', {
       if ('loading' in that.documents[0]) {
           number=0
       }
-      requestHandler.get_dataset_document(data_callback, data_callback_error, db, col, number, this.documents_filter || "{}", this.low_resolution);       
+      // base64 encode the filter
+      let b64encoded_documents_filter = btoa(this.documents_filter);
+      requestHandler.get_dataset_document(data_callback, data_callback_error, db, col, number, b64encoded_documents_filter || "{}", this.low_resolution);       
     },
 
     // --
