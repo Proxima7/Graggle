@@ -6,7 +6,6 @@ export const useGeneralStore = defineStore('general', {
       selected_db: "",
       selected_col: "",
       filter: "",
-      amount_bookmarks: 0,
       amount_bookmark_groups: 0,
       cmd: "",
   }),

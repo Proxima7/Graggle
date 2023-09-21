@@ -42,7 +42,6 @@
 <script>
 import Options from './Options.vue';
 import DatasetList from './DatasetList.vue';
-import BookmarkList from './BookmarkList.vue';
 import Filters from './Filters.vue';
 import BookmarkGroupList from './BookmarkGroupList.vue'; 
 
@@ -56,8 +55,7 @@ export default {
       buttons_col_span: 'col-span-2',
       menu_items: [
         {icon: 'fa-database', active: true, title: 'Datasets', comp: "DatasetList"},
-        {icon: 'fa-bookmark', active: false, title: 'Bookmarks', comp: "BookmarkList"},
-        {icon: 'fa-object-ungroup', active: false, title: 'Bookmark Groups', comp: "BookmarkGroupList"},
+        {icon: 'fa-bookmark', active: false, title: 'Bookmark Groups', comp: "BookmarkGroupList"},
         {icon: 'fa-filter', active: false, title: 'Filters', comp: "Filters"},
         {icon: 'fa-bars', active: false, title: 'Options', comp: "Options"},
       ],
@@ -106,7 +104,6 @@ export default {
   },
   components: {
     DatasetList,
-    BookmarkList,
     Filters,
     Options,
     BookmarkGroupList

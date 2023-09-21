@@ -69,23 +69,27 @@
         methods: {
           async handle_bookmark_groups(){
               let new_bookmarkgroups = BookmarkGroups.getBookmarkGroups("",  "")
+              this.bookmarkgroups = new_bookmarkgroups
               for(let i=0; i<new_bookmarkgroups.length; i++){
                 for(let ds=0; ds<new_bookmarkgroups[i].datasets.length; ds++){
                     let db = new_bookmarkgroups[i].datasets[ds].db
                     let col = new_bookmarkgroups[i].datasets[ds].col
-                    await this.handle_bookmark(i, ds, db, col, new_bookmarkgroups)
+                    this.handle_bookmark(i, ds, db, col, new_bookmarkgroups)
                 }
               }
-              this.bookmarkgroups = new_bookmarkgroups
+              
              
               
           },
           async handle_bookmark(i, ds, db, col, new_bookmarkgroups){
+              new_bookmarkgroups[i].datasets[ds].collection = col;
+              new_bookmarkgroups[i].datasets[ds].database = db;
+              new_bookmarkgroups[i].datasets[ds].title = db;
+
               let dataset_description = await this.datasetstore.read_dataset_description(db, col)
               new_bookmarkgroups[i].datasets[ds].image = dataset_description.image;
               new_bookmarkgroups[i].datasets[ds].title = dataset_description.dataset_display_title;
-              new_bookmarkgroups[i].datasets[ds].collection = col;
-              new_bookmarkgroups[i].datasets[ds].database = db;
+              
               
           },
           async open_bookmark_dialog_on_dataset(db, col){
