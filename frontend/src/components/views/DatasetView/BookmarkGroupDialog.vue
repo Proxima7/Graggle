@@ -11,18 +11,19 @@
                     <a href="#">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-white">{{headline}}</h5>
                     </a>
-                    <p class="mb-10 font-normal text-white">Add the dataset to an existing Bookmark Group (left side) <br> or create a new Bookmark Group with the dataset as the first member.</p>
+                    <p class="mb-10 font-normal text-white">Add the dataset to an existing Bookmark Group (left side) <br> 
+                        or create a new Bookmark Group with this dataset as the first member (right side).</p>
                     
 
                     <div class="col-span-full grid grid-cols-2 gap-4">
                         <!-- LEFT SIDE -->
                         <div class="border-2 shadow rounded p-2 w-full bg-white">
-                            <div class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">Add to Group</div>
+                            <div class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">ADD TO GROUP</div>
                             <p class="mb-4 font-normal text-gray-700 dark:text-gray-400">Dataset is added by clicking on Group name.</p>
                     
                             <div class="text-sm font-medium text-gray-900 bg-white border-2 border-primary rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <div aria-current="true" class="block w-full px-4 py-2 text-white bg-primary border-b border-primary rounded-t-lg cursor-pointer dark:bg-gray-800 dark:border-gray-600">
-                                    Bookmark Group Name
+                                    Bookmark Group Names
                                 </div>
 
                                 <div v-for="bookmarkgroup in bookmarkgroups" class="mt-2">
@@ -43,14 +44,14 @@
 
                         <!-- RIGHT SIDE-->
                         <div class="border-2 shadow rounded p-2 w-full bg-white">
-                            <div class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">New Group</div>
+                            <div class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">NEW GROUP</div>
 
                             <div class="flex flex-wrap items-center justify-center">
                                 <div class="border-2 border-primary justify-center shadow rounded p-2 w-full mb-2 grid grid-cols-1 gap-2">
                                     <!-- https://flowbite.com/docs/forms/floating-label/ -->
                                     <div class="relative">
                                         <input type="text" v-model="new_group_name" ref="textInputGroupName" class="block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-200 dark:bg-gray-700 border-0 border-b-2 border-primary appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-                                        <label @click="focusInput" for="floating_filled" class="absolute text-sm tablet:text-sm laptop:text-xl desktop:text-xl 4k:text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] left-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4">Bookmark Group Name</label>
+                                        <label @click="focusInput" for="floating_filled" class="absolute text-sm tablet:text-sm laptop:text-xl desktop:text-xl 4k:text-xl text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] left-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4">new Bookmark Group Name</label>
                                     </div>                                 
 
                                     <button @click="createGroup" type="button" class="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xl px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create + Add</button>

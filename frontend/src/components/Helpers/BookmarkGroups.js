@@ -8,13 +8,6 @@ export class BookmarkGroups {
         return groups
     }
 
-    static _setBookmarkGroups( ){
-        const groups = [
-            {"title": "fruit", "datasets": [{"db": "fruit-recognition", "col": "fruits360" }, {"db": "fruit-recognition", "col": "fruits_on_plate" }]},
-            {"title": "hornbach", "datasets": [{"db": "object-recognition", "col": "Hornbach-data-bornheim" }]}
-        ]
-        localStorage.setItem(BookmarkGroups.local_storace_name, JSON.stringify(groups));
-    }
 
     static _createBookmarkGroup(name, db, col){
         let groups = this._getBookmarkGroups()

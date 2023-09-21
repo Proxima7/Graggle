@@ -71,7 +71,7 @@ def data_by_collection(cron, db, col):
     size_mb = 0
     image_field = ""
     try:
-        document = cron.dti.get_document(db, col, 0, "")
+        document = cron.dti.get_document(db, col, 0, {})
 
         #entry = cron.dbm.db_accessor.get_data(db, col, return_images=True, query={}, doc_count=1, random_sample=True)[0]
         if "image" in document.document:
@@ -82,7 +82,7 @@ def data_by_collection(cron, db, col):
         pass
 
     try:
-        size_mb_average = average_image_size([cron.dti.get_document(db, col, 0, "").document[image_field] for i in range(5)])
+        size_mb_average = average_image_size([cron.dti.get_document(db, col, 0, {}).document[image_field] for i in range(5)])
         size_mb = round(number_of_documents * size_mb_average, 2)
     except Exception as e:
         pass
@@ -90,7 +90,7 @@ def data_by_collection(cron, db, col):
     preview_image = np.zeros((320, 480, 3), dtype=np.uint8)
     preview_image = cv2.putText(preview_image, 'HAS NO IMAGES', (5, 140), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 3, cv2.LINE_AA)
     try:
-        entries = [cron.dti.get_document(db, col, 0, "").document for index in range(0, 12)]
+        entries = [cron.dti.get_document(db, col, 0, {}).document for index in range(0, 12)]
         preview_image = create_random_4_3_preview_image([entry[image_field] for entry in entries])
         preview_image = cv2.resize(preview_image, (320, 240), interpolation=cv2.INTER_AREA)
     except Exception as e:
