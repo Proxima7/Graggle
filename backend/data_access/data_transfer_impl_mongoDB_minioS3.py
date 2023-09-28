@@ -1,6 +1,7 @@
 from data_access.data_transfer_interface import DataTransferInterface
 from data_access.data_transfer_interface import MetadataTransferInterface
-from data_access.data_transfer_objects import Databases, DatabaseCollections
+from data_access.data_transfer_interface import UserSessionInterface
+from data_access.data_transfer_objects import Databases, DatabaseCollections, Bookmarkgroups, Bookmarkgroup, Dataset
 from data_access.data_transfer_objects import Document
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
 
@@ -19,6 +20,31 @@ mongodb_con_string = vault_reader.read_value(f"prod_mongodb_con_string_admin", v
 my_mongo_client = pymongo.MongoClient(mongodb_con_string)
 temp_descriptors = []
 db_accessor = get_db_accessor(mongo_instance="prod", con_string_name="mongodb_con_string_admin")
+
+
+class UserdataMongoDBMinioS3(UserSessionInterface):
+    collection_bookmarkgroups = "bookmarkgroups"
+    db_graggle = "graggle"
+    def get_bookmark_groups(self) -> Bookmarkgroups:
+        dbgroups = db_accessor.get_data(self.db_graggle, self.collection_bookmarkgroups, return_images=False, query={})
+        if len(dbgroups)!=0:
+            bookmarkgroups = []
+            for dbgroup in dbgroups[0]["groups"]:
+                datasets = []
+                for dbdataset in dbgroup["datasets"]:
+                    datasets.append(Dataset(db=dbdataset["db"], col=dbdataset["col"]))
+                bookmarkgroups.append(Bookmarkgroup(name=dbgroup["name"], datasets=datasets))
+            return Bookmarkgroups(groups=bookmarkgroups)
+        else:
+            return Bookmarkgroups(groups=[])
+
+    def set_bookmark_groups(self, bookmarkgroups):
+        db_accessor.delete_data(self.db_graggle, self.collection_bookmarkgroups, {})
+        inserted_ids = db_accessor.insert_data(bookmarkgroups.dict(), self.db_graggle, self.collection_bookmarkgroups)
+        return inserted_ids
+
+    def get_username(self) -> str:
+        return "global"
 
 
 class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):

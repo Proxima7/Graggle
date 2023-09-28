@@ -6,7 +6,15 @@
         
         <div class="rounded-lg p-2" style="max-height: 800px">
             <div class="bg-white rounded-lg p-2 ">
-                <div class="p-6 bg-secondary border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
+                <div class="relative p-6 bg-secondary border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
+
+                    <div class="absolute right-2 top-2">
+                        <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" v-model="global_checked">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-secondary peer-focus:ring-4 peer-focus:ring-secondary dark:peer-focus:ring-secondary dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-secondary after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-secondary after:border-secondary after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-secondary peer-checked:bg-green-600"></div>
+                        <span class="ml-2 text-sm font-medium text-gray-300 dark:text-gray-300">GLOBAL</span>
+                        </label>
+                    </div>
 
                     <a href="#">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-white">{{headline}}</h5>
@@ -96,8 +104,16 @@ export default {
   }, 
   mounted() {
     watch(() => this.showDialog, (newValue, oldValue) => {
-          this.readBookmarkGroups()
-        });
+        this.readBookmarkGroups()
+    });
+    watch(() => this.global_checked, (newValue, oldValue) => {
+        this.gstore.global_storage = newValue
+        this.readBookmarkGroups()
+    });
+    watch(() => this.gstore.global_storage, (newValue, oldValue) => {
+        this.global_checked =this.gstore.global_storage
+        this.readBookmarkGroups()
+    });
   },
   data() {
     return {
@@ -105,12 +121,13 @@ export default {
       gstore: useGeneralStore(),
       datasetstore: useDatasetStore(),
       bookmarkgroups: null,
-      new_group_name: ""
+      new_group_name: "",
+      global_checked: false,
     };
   },
   methods: {
     async readBookmarkGroups(){
-        this.bookmarkgroups = BookmarkGroups.getBookmarkGroups(this.gstore.selected_db,  this.gstore.selected_col)
+        this.bookmarkgroups = await BookmarkGroups.getBookmarkGroups(this.gstore.selected_db,  this.gstore.selected_col)
         for(let i=0; i<this.bookmarkgroups.length; i++){
             for(let ds=0; ds<this.bookmarkgroups[i].datasets.length; ds++){
                 let db = this.bookmarkgroups[i].datasets[ds].db
@@ -125,17 +142,19 @@ export default {
             }
         }
     },
-    createGroup(){
+    async createGroup(){
         if(this.new_group_name==""){
             console.log("missing new group name")
         } else {
-            BookmarkGroups.setBookmarkGroup(this.new_group_name, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
+            await BookmarkGroups.setBookmarkGroup(this.new_group_name, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
+            console.log("create group done")
             this.readBookmarkGroups()
+
             //this.closeDialog()
         }
         
     },
-    add2group(groupname){
+    async add2group(groupname){
         // check if in group
         let is_in_group = false
         for(let i=0; i<this.bookmarkgroups.length; i++){
@@ -151,9 +170,9 @@ export default {
             }
         }
         if(is_in_group){
-            BookmarkGroups.removeBookmarkGroup(groupname, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
+            await BookmarkGroups.removeBookmarkGroup(groupname, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
         } else {    
-            BookmarkGroups.addBookmarkGroup(groupname, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
+            await BookmarkGroups.addBookmarkGroup(groupname, this.gstore.selected_db,  this.gstore.selected_col, this.gstore)
         }        
         this.readBookmarkGroups()
         //this.closeDialog()

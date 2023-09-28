@@ -1,18 +1,44 @@
+
+import requestHandler from "../../logic/RequestHandler"
+import { useGeneralStore } from '@/stores/general'
+
 export class BookmarkGroups {
 
     static local_storace_name = 'bookmarkgroups'
 
+    static async _readBookmarkGroups( ){
+        const gstore = useGeneralStore()
+        if(gstore.global_storage){
+            var global_groups = []
+            const bookmark_group_callback = function(resp){
+                global_groups = resp.data.groups
+              }
+            await requestHandler.get_bookmark_groups(bookmark_group_callback)
+            return global_groups
+        } else {
+            const groups = JSON.parse(localStorage.getItem(BookmarkGroups.local_storace_name)) || [];
+            return groups
+        }        
+    }
 
-    static _getBookmarkGroups( ){
-        const groups = JSON.parse(localStorage.getItem(BookmarkGroups.local_storace_name)) || [];
-        return groups
+    static async _writeBookmarkGroup(groups){
+        const gstore = useGeneralStore()
+        if(gstore.global_storage){
+            const bookmark_group_callback = function(resp){
+                console.log(resp)
+              }
+            await requestHandler.post_bookmark_groups(bookmark_group_callback, {"groups": groups})
+        } else {
+            localStorage.setItem(BookmarkGroups.local_storace_name, JSON.stringify(groups));
+        }  
+        
     }
 
 
-    static _createBookmarkGroup(name, db, col){
-        let groups = this._getBookmarkGroups()
+    static async _createBookmarkGroup(name, db, col){
+        let groups = await this._readBookmarkGroups()
         groups.push({"name": name, "datasets": [{"db": db, "col": col }]})
-        localStorage.setItem(BookmarkGroups.local_storace_name, JSON.stringify(groups));
+        await this._writeBookmarkGroup(groups)
     }
 
     static adjustCounter(store){
@@ -20,18 +46,18 @@ export class BookmarkGroups {
     }
 
 
-    static _add2BookmarkGroup(name, db, col){
-        let groups = this._getBookmarkGroups()
+    static async _add2BookmarkGroup(name, db, col){
+        let groups = await this._readBookmarkGroups()
         for(let i=0; i<groups.length; i++){
             if(groups[i].name == name){
                 groups[i].datasets.push({"db": db, "col": col })
             }
         }
-        localStorage.setItem(BookmarkGroups.local_storace_name, JSON.stringify(groups));
+        await this._writeBookmarkGroup(groups)
     }
 
-    static _removeBookmarkGroup(name, db, col){
-        let groups = this._getBookmarkGroups()
+    static async _removeBookmarkGroup(name, db, col){
+        let groups = await this._readBookmarkGroups()
         for(let i=0; i<groups.length; i++){
             if(groups[i].name == name){
                 let remove_dataset_index=-1
@@ -49,27 +75,27 @@ export class BookmarkGroups {
                 }
             }
         }
-        localStorage.setItem(BookmarkGroups.local_storace_name, JSON.stringify(groups));
+        await this._writeBookmarkGroup(groups)
     }
     
-    static addBookmarkGroup(name, db, col, store){
+    static async addBookmarkGroup(name, db, col, store){
+        await this._add2BookmarkGroup(name, db, col)
         this.adjustCounter(store)
-        return this. _add2BookmarkGroup(name, db, col)
     }
 
-    static removeBookmarkGroup(name, db, col, store){
+    static async removeBookmarkGroup(name, db, col, store){
+        await this. _removeBookmarkGroup(name, db, col)
         this.adjustCounter(store)
-        return this. _removeBookmarkGroup(name, db, col)
     }
     
 
-    static setBookmarkGroup(name, db, col, store){
+    static async setBookmarkGroup(name, db, col, store){
+        await this._createBookmarkGroup(name, db, col)
         this.adjustCounter(store)
-        return this. _createBookmarkGroup(name, db, col)
     }
 
-    static getBookmarkGroups(db, col){
-        let bookmarkgroups = this._getBookmarkGroups()
+    static async getBookmarkGroups(db, col){
+        let bookmarkgroups = await this._readBookmarkGroups()
         return bookmarkgroups
 
         // optional

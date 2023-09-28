@@ -7,6 +7,7 @@ export const useGeneralStore = defineStore('general', {
       selected_col: "",
       filter: "",
       amount_bookmark_groups: 0,
+      global_storage: false,
       cmd: "",
   }),
   actions: {

@@ -11,7 +11,7 @@ from util.updater import Updater
 from fastapi_hosting.environment_helper import set_necessary_environment
 from fastapi_hosting.frontend_files_hosting import Static
 from data_access import data_transfer_impl_mongoDB_minioS3
-from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
+from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor, Bookmarkgroups
 
 # Start Service + Description
 app = FastAPI(
@@ -42,6 +42,7 @@ set_necessary_environment()
 # + mongodb for image references and metadata
 dti = data_transfer_impl_mongoDB_minioS3.DataTransferMongoDBMinioS3()
 mdti = data_transfer_impl_mongoDB_minioS3.MetadataTransferMongoDBMinioS3()
+ud = data_transfer_impl_mongoDB_minioS3.UserdataMongoDBMinioS3()
 
 @app.on_event("startup")
 async def startup_event():
@@ -197,9 +198,23 @@ def get_dataset_comments(db: str, col: str) -> dict:
     comment3 = Comment(id=3, person="Mr. Lorem Ipsum", text="Comment no.3")
     return Comments(comments=[comment1, comment2, comment3])
 
+@app.get("/bookmarkgroups")
+def get_bookmark_group() -> Bookmarkgroups:
+    bookmarkgroups = ud.get_bookmark_groups()
+    return bookmarkgroups
+
+@app.post("/bookmarkgroups")
+def post_bookmark_group(bookmarkgroups: Bookmarkgroups):
+    ids = ud.set_bookmark_groups(bookmarkgroups)
+
+    if len(ids) != 0:
+        return Response(status_code=201, content=None)
+    else:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="creation failure post_bookmark_group")
+
 
 @app.get(f"/health/live")
-async def health():
+def health():
     """
     Health endpoint for webservice lifetime check
 
@@ -214,7 +229,7 @@ if __name__ == "__main__":
     my_port = int(os.getenv("APP_PORT"))
     my_root_path = os.getenv("ENDPOINT_PREFIX")
     if my_root_path and len(my_root_path) > 0:
-        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path=my_root_path)
+        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path=my_root_path, limit_concurrency=50)
     else:
-        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path="")
+        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path="", limit_concurrency=50)
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

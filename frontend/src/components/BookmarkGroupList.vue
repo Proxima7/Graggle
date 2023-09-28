@@ -3,7 +3,7 @@
 
       <div class="grid grid-cols-1 gap-2 ">
         <div>
-          <loading-overlay class="relative" v-if="bookmarkgroups.length==0" :loading="bookmarkgroups.length==0" headline="Loading" subline="Bookmark Groups"></loading-overlay>
+          <loading-overlay class="relative" v-if="is_loading" :loading="is_loading" headline="Loading" subline="Bookmark Groups"></loading-overlay>
         </div>
         
 
@@ -46,10 +46,12 @@
     import { useDatasetStore } from '@/stores/dataset'
     import { watch } from 'vue'
     import LoadingOverlay from "./Helpers/LoadingOverlay.vue"
+    import requestHandler from "../logic/RequestHandler"
 
     export default {
         data() {
           return {
+              is_loading: false,
               bookmarkgroups: [],
               gstore: useGeneralStore(),
               datasetstore: useDatasetStore(),
@@ -61,26 +63,33 @@
         computed: {
         },
         mounted() {
-            this.handle_bookmark_groups()
+            this.handle_bookmark_groups(this.gstore.global_storage)
+
             watch(() => this.gstore.amount_bookmark_groups, (newValue, oldValue) => {
-              this.handle_bookmark_groups()
-          });
+              this.handle_bookmark_groups(this.gstore.global_storage)
+            });
+
+            watch(() => this.gstore.global_storage, (newValue, oldValue) => {
+              this.handle_bookmark_groups(this.gstore.global_storage)
+            });
         },
         methods: {
-          async handle_bookmark_groups(){
-              let new_bookmarkgroups = BookmarkGroups.getBookmarkGroups("",  "")
-              this.bookmarkgroups = new_bookmarkgroups
-              for(let i=0; i<new_bookmarkgroups.length; i++){
-                for(let ds=0; ds<new_bookmarkgroups[i].datasets.length; ds++){
-                    let db = new_bookmarkgroups[i].datasets[ds].db
-                    let col = new_bookmarkgroups[i].datasets[ds].col
-                    this.handle_bookmark(i, ds, db, col, new_bookmarkgroups)
-                }
+          async handle_bookmark_groups(global){
+            this.is_loading = true
+            this.bookmarkgroups = []
+            this.bookmarkgroups = await BookmarkGroups.getBookmarkGroups("",  "")            
+              
+            
+            for(let i=0; i<this.bookmarkgroups.length; i++){
+              for(let ds=0; ds<this.bookmarkgroups[i].datasets.length; ds++){
+                  let db = this.bookmarkgroups[i].datasets[ds].db
+                  let col = this.bookmarkgroups[i].datasets[ds].col
+                  this.handle_bookmark(i, ds, db, col, this.bookmarkgroups)
               }
-              
-             
-              
+            }   
+            this.is_loading=false       
           },
+
           async handle_bookmark(i, ds, db, col, new_bookmarkgroups){
               new_bookmarkgroups[i].datasets[ds].collection = col;
               new_bookmarkgroups[i].datasets[ds].database = db;
@@ -103,8 +112,8 @@
               this.gstore.selected_db = db
               this.gstore.selected_col = col
           },
-          remove(groupname, db, col){
-            BookmarkGroups.removeBookmarkGroup(groupname, db,  col, this.gstore)
+          async remove(groupname, db, col){
+            await BookmarkGroups.removeBookmarkGroup(groupname, db,  col, this.gstore)
             this.handle_bookmark_groups()
           }
         },

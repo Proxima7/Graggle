@@ -48,3 +48,16 @@ class DatasetDescription(BaseModel):
     image: str
     generated: bool
     descriptors: DatasetDescriptor
+
+class Dataset(BaseModel):
+    """Dataset identifier"""
+    db: str
+    col: str
+class Bookmarkgroup(BaseModel):
+    """Bookmarkgroup"""
+    name: str
+    datasets: List[Dataset] = []
+
+class Bookmarkgroups(BaseModel):
+    """List of Bookmarkgroups"""
+    groups: List[Bookmarkgroup] = []
