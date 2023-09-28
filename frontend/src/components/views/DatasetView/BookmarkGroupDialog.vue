@@ -17,8 +17,11 @@
                     </div>
 
                     <a href="#">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-white">{{headline}}</h5>
+                        <h5 class="mb-5 text-2xl font-bold tracking-tight text-gray-900 text-white">{{headline}}</h5>
                     </a>
+                    <p class="mb-1 font-normal text-white">Database: {{ gstore.selected_db }}</p>
+                    <p class="mb-5 font-normal text-white">collection: {{ gstore.selected_col }}</p>
+
                     <p class="mb-10 font-normal text-white">Add the dataset to an existing Bookmark Group (left side) <br> 
                         or create a new Bookmark Group with this dataset as the first member (right side).</p>
                     
