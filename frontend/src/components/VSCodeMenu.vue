@@ -77,6 +77,7 @@ export default {
     }
   }, 
   mounted(){
+    this.global_checked =this.gstore.global_storage
     watch(() => this.global_checked, (newValue, oldValue) => {
       this.gstore.global_storage = newValue
     });

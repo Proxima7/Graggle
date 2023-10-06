@@ -58,24 +58,32 @@ export class BookmarkGroups {
 
     static async _removeBookmarkGroup(name, db, col){
         let groups = await this._readBookmarkGroups()
+        let new_groups = []
         for(let i=0; i<groups.length; i++){
-            if(groups[i].name == name){
-                let remove_dataset_index=-1
+            if(groups[i].name == name){                
+                let new_group = null
+                // if group lenght = 1 then group will be empty afterwards only for groups that have dataset inside it is worth to create
+                if(groups[i].datasets.length>1){
+                    new_group = {"name": name, "datasets": []}
+                }
+                // add all to new group that are still inside of list
                 for(let ds=0; ds<groups[i].datasets.length; ds++){
-                    if(db==groups[i].datasets[ds].db && col==groups[i].datasets[ds].col){
-                        remove_dataset_index = ds
+                    if(!(db==groups[i].datasets[ds].db && col==groups[i].datasets[ds].col)){
+                        new_group.datasets.push({"db": groups[i].datasets[ds].db, "col": groups[i].datasets[ds].col })
                     }
                 }
-                if(remove_dataset_index!=-1){
-                    groups[i].datasets.splice(remove_dataset_index)
-
-                    if(groups[i].datasets.length==0){
-                        groups.splice(i) 
-                    }
+                // if new group add it
+                if(new_group != null){
+                    new_groups.push(new_group)
                 }
+            } else {
+                new_groups.push(groups[i])
             }
         }
-        await this._writeBookmarkGroup(groups)
+        await this._writeBookmarkGroup(new_groups)
+
+
+        
     }
     
     static async addBookmarkGroup(name, db, col, store){

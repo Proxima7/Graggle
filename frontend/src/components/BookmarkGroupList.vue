@@ -71,6 +71,7 @@
 
             watch(() => this.gstore.global_storage, (newValue, oldValue) => {
               this.handle_bookmark_groups(this.gstore.global_storage)
+              this.global_checked = newValue
             });
         },
         methods: {

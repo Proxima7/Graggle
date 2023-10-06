@@ -101,11 +101,11 @@ export default {
     },
   },
   computed: {
-    
   },
   components: { 
   }, 
   mounted() {
+    this.global_checked =this.gstore.global_storage
     watch(() => this.showDialog, (newValue, oldValue) => {
         this.readBookmarkGroups()
     });

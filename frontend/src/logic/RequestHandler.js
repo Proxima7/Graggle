@@ -62,11 +62,11 @@ class RequestHandler {
     }
 
     get_bookmark_groups(callback){
-        return this.requests_axios.get(this.backendURL + "/bookmarkgroups").then(callback)
+        return this.requests_axios.get(this.backendURL + "/bookmarkgroups", {timeout: 10000} ).then(callback)
     }
 
     post_bookmark_groups(callback, body){
-        return this.requests_axios.post(this.backendURL + "/bookmarkgroups", body).then(callback)
+        return this.requests_axios.post(this.backendURL + "/bookmarkgroups", body, {timeout: 10000}).then(callback)
     }
 
 
