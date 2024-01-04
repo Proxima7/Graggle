@@ -91,7 +91,7 @@ export default {
         } else if (screenWidth < 1024) {
             this.records_max = 18
         } else if (screenWidth < 1600) {
-            this.records_max = 6
+            this.records_max = 24
         }else if (screenWidth < 2500) {
             this.records_max = 36
         } else {
@@ -123,7 +123,7 @@ export default {
         },
         handleMenuItemClick(menuItem) {
             // Perform actions based on the clicked menu item            
-            if(this.selection.length==1 && menuItem.label=="Details"){
+            if(menuItem.label=="Details"){
                 this.gstore.selected_dataset_id = this.selectionDocuments[0]._id
             }
             this.isMenuVisible = false;
