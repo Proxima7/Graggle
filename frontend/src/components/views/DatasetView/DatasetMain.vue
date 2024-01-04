@@ -48,6 +48,7 @@ import DatasetExplorer from "./DatasetExplorer.vue"
 // if you used v1.0.5 or latster ,you should add import "vue3-json-viewer/dist/index.css"
 import { useGeneralStore } from '@/stores/general'
 import { useDatasetStore } from '@/stores/dataset'
+import { watch } from 'vue'
 
 
 
@@ -67,6 +68,9 @@ export default {
         }
     },
     mounted() {
+        watch(() => this.gstore.selected_dataset_id, (newValue, oldValue) => {
+            this.activate(2)
+        });
     },
     computed: {
     },     

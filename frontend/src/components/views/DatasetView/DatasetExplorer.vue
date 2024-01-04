@@ -18,18 +18,18 @@
 
         </div>
         <div class="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 desktop:grid-cols-6 4k:grid-cols-12 max-[800px]:gap-1 min-[800px]:gap-4">
-            <img v-for="(dataset_img, index) in datasetstore.data_get_all_image()" 
+            <img v-for="(document, index) in datasetstore.data_get_all_documents()" 
                     @contextmenu.prevent="showMenu($event)"
                     class="" 
-                    :src="dataset_img"
-                    @click="click_select(index)"
-                    :class="is_selected(index) ? 'opacity-75 border-8 border-red-600' : 'opacity-100'"/>
+                    :src="document.blobimage"
+                    @click="click_select(index, document)"
+                    :class="is_selected(index, document) ? 'opacity-75 border-8 border-red-600' : 'opacity-100'"/>
         </div>
         <div v-show="isMenuVisible" ref="menu" class="absolute bg-primary border-2 p-1 border-black w-48" :style="{ top: menuPosition.top + 'px', left: menuPosition.left + 'px' }">
             <ul>
                 <li v-for="(menuItem, index) in menuItems" :key="menuItem.id" @click="handleMenuItemClick(menuItem)"
                     class="p-1 text-gray-300 font-bold " 
-                    :class="index==(menuItems.length-1) || index==2 || index==4 ? 'border-t-2 border-black' : ''">
+                    :class="index==(menuItems.length-1) || index==1 || index==3 || index==5 ? 'border-t-2 border-black' : ''">
                     {{ menuItem.label }}
                 </li>
             </ul>
@@ -53,6 +53,7 @@ export default {
         return {
             filter: "",
             selection: [],
+            selectionDocuments: [],
             visible: true,
             records_max: 24,
             records_queried: 0,          
@@ -65,13 +66,14 @@ export default {
                 left: 0
             },
             menuItems: [
-                { id: 1, label: 'Delete' },
-                { id: 2, label: 'Move' },
-                { id: 3, label: 'Download selected' },
-                { id: 4, label: 'Download all' },
-                { id: 5, label: 'Export selected' },
-                { id: 6, label: 'Export all' },
-                { id: 7, label: 'Exit' }
+                { id: 1, label: 'Details' },
+                { id: 2, label: 'Delete' },
+                { id: 3, label: 'Move' },
+                { id: 4, label: 'Download selected' },
+                { id: 5, label: 'Download all' },
+                { id: 6, label: 'Export selected' },
+                { id: 7, label: 'Export all' },
+                { id: 8, label: 'Exit' }
             ]
         }
     },
@@ -89,7 +91,7 @@ export default {
         } else if (screenWidth < 1024) {
             this.records_max = 18
         } else if (screenWidth < 1600) {
-            this.records_max = 24
+            this.records_max = 6
         }else if (screenWidth < 2500) {
             this.records_max = 36
         } else {
@@ -120,24 +122,30 @@ export default {
             }
         },
         handleMenuItemClick(menuItem) {
-            // Perform actions based on the clicked menu item
+            // Perform actions based on the clicked menu item            
+            if(this.selection.length==1 && menuItem.label=="Details"){
+                this.gstore.selected_dataset_id = this.selectionDocuments[0]._id
+            }
             this.isMenuVisible = false;
             this.selection = []
+            this.selectionDocuments = []
         },
         is_selected(index){
             return this.selection.includes(index)
         },
-        click_select(index) {
+        click_select(index, document) {
             let selected = this.is_selected(index)
             if (selected) {
                 // Remove the value from the list
                 const myindex = this.selection.indexOf(index);
                 if (myindex > -1) {
                     this.selection.splice(myindex, 1);
+                    this.selectionDocuments.splice(myindex, 1);
                 }
             } else {
                 // Add the value to the list
                 this.selection.push(index);
+                this.selectionDocuments.push(document);
             }
         },
         reload(){

@@ -97,13 +97,14 @@ export const useDatasetStore = defineStore('dataset', {
           let document = resp.data.document
 
           // create image url usable in anatorious
-          if ('image' in resp.data.document){
-              that.documents_images.push(Helper.base64_to_url(resp.data.document['image']))                
-              delete document['image']
+          if ('image' in document){
+              that.documents_images.push(Helper.base64_to_url(document['image']))                
+              document['blobimage'] = document['image']
           }
-          if ('image_data' in resp.data.document){
-              that.documents_images.push(Helper.base64_to_url(resp.data.document['image_data']))                
-              delete document['image_data']
+          if ('image_data' in document){
+              that.documents_images.push(Helper.base64_to_url(document['image_data']))    
+              document['blobimage'] = document['image_data']
+              delete document['image_data']            
           }           
           
           that.documents.push(document)

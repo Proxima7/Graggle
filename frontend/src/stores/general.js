@@ -5,6 +5,7 @@ export const useGeneralStore = defineStore('general', {
       count: 0,
       selected_db: "",
       selected_col: "",
+      selected_dataset_id: "",
       filter: "",
       amount_bookmark_groups: 0,
       global_storage: false,
