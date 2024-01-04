@@ -81,7 +81,16 @@ export default {
     mounted() {
         this.datasetstore.reset()
         this.datasetstore.low_resolution = false
-        this.datasetstore.load()
+        
+
+        if(this.gstore.selected_dataset_id == ""){
+            this.datasetstore.load()
+        } 
+        else {
+            this.filter = "{'_id': '"+this.gstore.selected_dataset_id+"'}"
+            this.datasetstore.set_filter(this.filter)
+            this.datasetstore.get_data(true)
+        }
 
         watch(() => this.gstore.selected_col, (newValue, oldValue) => {
             this.reset(true)

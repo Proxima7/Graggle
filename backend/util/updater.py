@@ -27,17 +27,18 @@ def collection_metadata_description_updater(cron):
                 print(col)
                 number_of_documents, size_mb, created, last_update, preview_image = data_by_collection(cron, db, col)
 
-                datasetdescriptor = DatasetDescriptor(database=db,
-                                               collection=col,
-                                               number_of_documents=number_of_documents,
-                                               usability="",
-                                               created_by="",
-                                               annotation_types="",
-                                               size_mb=size_mb,
-                                               created=created,
-                                               last_update=last_update,
-                                               image="data:image/png;base64," + convert_ndarray_to_base_64(preview_image))
-                datasetdescriptors.append(datasetdescriptor)
+                if number_of_documents != 0:
+                    datasetdescriptor = DatasetDescriptor(database=db,
+                                                   collection=col,
+                                                   number_of_documents=str(number_of_documents),
+                                                   usability="",
+                                                   created_by="",
+                                                   annotation_types="",
+                                                   size_mb=str(size_mb),
+                                                   created=created,
+                                                   last_update=last_update,
+                                                   image="data:image/png;base64," + convert_ndarray_to_base_64(preview_image))
+                    datasetdescriptors.append(datasetdescriptor)
             if run==0:
                 cron.mdti.set_datasets_details(Datasets(datasetdescriptors=datasetdescriptors))
                 print("temp descriptors filled")

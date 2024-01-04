@@ -74,8 +74,8 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
 
         dataset_descriptor = DatasetDescriptor(database=datas[0]["database"],
                                               collection=datas[0]["collection"],
-                                              number_of_documents=datas[0]['descriptors']["number_of_documents"],
-                                              size_mb=datas[0]['descriptors']["size_mb"],
+                                              number_of_documents=str(datas[0]['descriptors']["number_of_documents"]),
+                                              size_mb=str(datas[0]['descriptors']["size_mb"]),
                                               created=datas[0]['descriptors']["created"],
                                               last_update=datas[0]['descriptors']["last_update"],
                                               image="",
@@ -177,7 +177,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
         if len(documents) == 0:
             return None
         else:
-            del documents[0]["_id"]
+            documents[0]["_id"] = str(documents[0]["_id"])
             utils.remove_objects_of_type(documents[0], ObjectId)
             return Document(document=documents[0])
 
