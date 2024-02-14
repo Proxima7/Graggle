@@ -5,6 +5,7 @@ import os
 import cv2
 import uvicorn
 import base64
+from globals import configure_logging, logger
 from fastapi_models.models import *
 from util import utils
 from util.updater import Updater
@@ -12,6 +13,8 @@ from fastapi_hosting.environment_helper import set_necessary_environment
 from fastapi_hosting.frontend_files_hosting import Static
 from data_access import data_transfer_impl_mongoDB_minioS3
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor, Bookmarkgroups
+
+
 
 # Start Service + Description
 app = FastAPI(
@@ -63,6 +66,7 @@ def root():
 
 @app.get("/databases")
 def get_databases_with_collections() -> dict:
+    logger.debug(f"Endpoint: GET:/databases")
     """
     Endpoint to get all available datasets.
 
@@ -73,6 +77,7 @@ def get_databases_with_collections() -> dict:
 
 @app.post("/datasets/filter")
 def get_databases_filtered(data: PostFilter) -> dict:
+    logger.debug(f"Endpoint: GET:/dataset/document/ with {data}")
     """
     Endpoint to filter datasets.
     Args:
@@ -101,6 +106,7 @@ def get_databases_filtered(data: PostFilter) -> dict:
 
 @app.get("/dataset/document/{db}/{col}/{skip_count}/{base64_filter}")
 def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_count: int, base64_filter: str, low_resolution: bool = False) -> dict:
+    logger.debug(f"Endpoint: GET:/dataset/document/{db}/{col}/{skip_count}/{base64_filter}")
     """
     Endpoint to query/filter for a specific document based on the parameters.
 
@@ -132,6 +138,7 @@ def get_document_of_database_and_collection_with_filter(db: str, col: str, skip_
 
 @app.get("/dataset/description/{db}/{col}")
 def get_dataset_description(db: str, col: str) -> dict:
+    logger.debug(f"Endpoint: GET:/dataset/description/{db}/{col}")
     """
     Endpoint to get the dataset description based on the parameter.
 
@@ -149,6 +156,7 @@ def get_dataset_description(db: str, col: str) -> dict:
 
 @app.post("/dataset/description")
 def insert_dataset_description(data: PostDataSetDesc) -> dict:
+    logger.debug(f"Endpoint: POST:/dataset/description with {data}")
     """
     Endpoint to add a dataset description.
 
@@ -184,6 +192,7 @@ def insert_dataset_description(data: PostDataSetDesc) -> dict:
 
 @app.get("/dataset/comments/{db}/{col}")
 def get_dataset_comments(db: str, col: str) -> dict:
+    logger.debug(f"Endpoint: GET: /dataset/comments/{db}/{col}")
     """
     Endpoint to get the comments for a dataset
     Args:
@@ -200,11 +209,13 @@ def get_dataset_comments(db: str, col: str) -> dict:
 
 @app.get("/bookmarkgroups")
 def get_bookmark_group() -> Bookmarkgroups:
+    logger.debug(f"Endpoint: GET:/bookmarkgroups")
     bookmarkgroups = ud.get_bookmark_groups()
     return bookmarkgroups
 
 @app.post("/bookmarkgroups")
 def post_bookmark_group(bookmarkgroups: Bookmarkgroups):
+    logger.debug(f"Endpoint: POST:/bookmarkgroups with {bookmarkgroups}")
     ids = ud.set_bookmark_groups(bookmarkgroups)
 
     if len(ids) != 0:
@@ -222,14 +233,22 @@ def health():
     """
     return {"status": "ok"}
 
+
+
 if __name__ == "__main__":
     """
         Main start of webserver
     """
+    configure_logging()
+
     my_port = int(os.getenv("APP_PORT"))
+    logger.warning(f'Using PORT:{my_port}')
+
     my_root_path = os.getenv("ENDPOINT_PREFIX")
+    logger.warning(f'Using ENDPOINT_PREFIX:{my_root_path}')
+
     if my_root_path and len(my_root_path) > 0:
-        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path=my_root_path, limit_concurrency=50)
+        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path=my_root_path, limit_concurrency=50, log_level="warning")
     else:
-        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path="", limit_concurrency=50)
+        uvicorn.run(app, host="0.0.0.0", port=my_port, root_path="", limit_concurrency=50, log_level="warning")
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

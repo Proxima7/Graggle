@@ -10,7 +10,7 @@ from database_accessor import get_db_accessor
 
 import pymongo
 import ast
-import json
+from globals import logger
 from bson.objectid import ObjectId
 import cv2
 from util import utils
@@ -135,7 +135,7 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         try:
             coll.update_one(query, new_value)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
     def insert_dataset_description(self, dataset_description: DatasetDescription):
         dataset_description = utils.object_to_dict(dataset_description)
@@ -201,7 +201,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
             try:
                 parsed_filter = ast.literal_eval(filter)
             except Exception as e:
-                print(f"Exception when creating query for pymongo with error: {e}")
+                logger.error(f"Exception when creating query for pymongo with error: {e}")
                 parsed_filter = {}
 
         # manuelly create the ObjectId

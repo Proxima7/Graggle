@@ -5,6 +5,7 @@ import numpy as np
 
 from util.utils import average_image_size, create_random_4_3_preview_image, convert_ndarray_to_base_64
 from data_access.data_transfer_objects import Datasets, DatasetDescriptor
+from globals import logger
 
 
 def collection_metadata_description_updater(cron):
@@ -24,7 +25,7 @@ def collection_metadata_description_updater(cron):
             db = database_collection.database_name
             for collection in database_collection.collection_names:
                 col = collection
-                print(col)
+                logger.debug(f"Handle collection: {col}")
                 number_of_documents, size_mb, created, last_update, preview_image = data_by_collection(cron, db, col)
 
                 if number_of_documents != 0:
@@ -41,10 +42,10 @@ def collection_metadata_description_updater(cron):
                     datasetdescriptors.append(datasetdescriptor)
             if run==0:
                 cron.mdti.set_datasets_details(Datasets(datasetdescriptors=datasetdescriptors))
-                print("temp descriptors filled")
+                logger.debug("temp descriptors filled")
         if run > 0:
             cron.mdti.set_datasets_details(Datasets(datasetdescriptors=datasetdescriptors))
-            print("temp descriptors filled")
+            logger.debug("temp descriptors filled")
         run = run + 1
 
         datas = cron.mdti.all_dataset_descriptions()
