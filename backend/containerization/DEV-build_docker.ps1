@@ -1,5 +1,5 @@
 $name = "graggle-backend-service"
-$version = "0.2.1"
+$version = "0.2.2"
 $subscriptionIdProd = "364b7112-d791-4caa-99c9-9333f961b2a3"
 $subscriptionIdDev = "205fa633-bf76-4fac-8cd1-3b60d08aa6df"
 
