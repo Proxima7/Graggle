@@ -184,8 +184,8 @@ def insert_dataset_description(data: PostDataSetDesc) -> dict:
                                              generated=False,
                                              descriptors=dataset_descriptor)
 
-    ids = mdti.insert_dataset_description(dataset_description)
-    if len(ids) != 0:
+    valid = mdti.insert_dataset_description(dataset_description)
+    if valid:
         return Response(status_code=201, content=None)
     else:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="creation failure")
@@ -216,9 +216,9 @@ def get_bookmark_group() -> Bookmarkgroups:
 @app.post("/bookmarkgroups")
 def post_bookmark_group(bookmarkgroups: Bookmarkgroups):
     logger.debug(f"Endpoint: POST:/bookmarkgroups with {bookmarkgroups}")
-    ids = ud.set_bookmark_groups(bookmarkgroups)
+    valid = ud.set_bookmark_groups(bookmarkgroups)
 
-    if len(ids) != 0:
+    if valid:
         return Response(status_code=201, content=None)
     else:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="creation failure post_bookmark_group")

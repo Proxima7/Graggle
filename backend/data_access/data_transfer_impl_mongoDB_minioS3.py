@@ -6,9 +6,11 @@ from data_access.data_transfer_objects import Document
 from data_access.data_transfer_objects import DatasetDescription, DatasetDescriptor
 
 from database_accessor.utils import vault_reader
-from database_accessor import get_db_accessor
+from database_accessor import get_collection_interface
+
 
 import pymongo
+import json
 import ast
 from globals import logger
 from bson.objectid import ObjectId
@@ -16,17 +18,35 @@ import cv2
 from util import utils
 import numpy as np
 
-mongodb_con_string = vault_reader.read_value(f"prod_mongodb_con_string_admin", vault="prod")
+mongodb_con_string = vault_reader.read_value(f"prod_mongodb_con_string_admin".upper(), vault="prod")
 my_mongo_client = pymongo.MongoClient(mongodb_con_string)
 temp_descriptors = []
-db_accessor = get_db_accessor(mongo_instance="prod", con_string_name="mongodb_con_string_admin")
+#db_accessor = get_db_accessor(mongo_instance="prod", con_string_name="mongodb_con_string_admin")
 
+DB_KEY_SEPARATOR = "###"
+INSTANCE = "prod"
+class DBC:
+    interface_pool = {}
+
+    def get_interface(self, db, col):
+        db_key = f"{db}{DB_KEY_SEPARATOR}{col}"  
+        
+        if db_key not in self.interface_pool:
+            # create new interface, first access
+            db_accessor_new = get_collection_interface(db, col, INSTANCE)
+            self.interface_pool[db_key] = db_accessor_new
+
+        return self.interface_pool[db_key]
+    
 
 class UserdataMongoDBMinioS3(UserSessionInterface):
-    collection_bookmarkgroups = "bookmarkgroups"
-    db_graggle = "graggle"
+
+    def __init__(self):
+        self.dbc = DBC()
+        self.interface = self.dbc.get_interface("graggle", "bookmarkgroups")
+    
     def get_bookmark_groups(self) -> Bookmarkgroups:
-        dbgroups = db_accessor.get_data(self.db_graggle, self.collection_bookmarkgroups, return_images=False, query={})
+        dbgroups = self.interface.get_data(return_images=False, query={})
         if len(dbgroups)!=0:
             bookmarkgroups = []
             for dbgroup in dbgroups[0]["groups"]:
@@ -39,27 +59,29 @@ class UserdataMongoDBMinioS3(UserSessionInterface):
             return Bookmarkgroups(groups=[])
 
     def set_bookmark_groups(self, bookmarkgroups):
-        db_accessor.delete_data(self.db_graggle, self.collection_bookmarkgroups, {})
-        inserted_ids = db_accessor.insert_data(bookmarkgroups.dict(), self.db_graggle, self.collection_bookmarkgroups)
-        return inserted_ids
+        self.interface.delete_many({})
+        result = self.interface.insert_one(bookmarkgroups.dict())
+        if result.acknowledged:
+            return True
+        else:
+            return False
 
     def get_username(self) -> str:
         return "global"
-
-
+    
 class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
 
     def __init__(self):
-        pass
+        self.dbc = DBC()
 
     def all_dataset_descriptions(self) -> DatasetDescription:
         query = {}
-        datas = db_accessor.get_data("graggle", "dataset_descriptions", return_images=True, query=query)
+        datas = self.dbc.get_interface("graggle", "dataset_descriptions").get_data(return_images=True, query=query)
         return datas
 
     def get_dataset_description(self, database: str, collection: str) -> DatasetDescription:
         query = {"database": database, "collection": collection}
-        datas = db_accessor.get_data("graggle", "dataset_descriptions", return_images=True, query=query)
+        datas = self.dbc.get_interface("graggle", "dataset_descriptions").get_data(return_images=True, query=query)
 
         # fill with dummy if not existing
         if len(datas) == 0:
@@ -127,13 +149,11 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         return dataset_description
 
     def update_dataset_description(self, database: str, collection: str, number_of_documents: int, size_mb: float, created: str, last_update: str):
-        db = my_mongo_client["graggle"]
-        coll = db["dataset_descriptions"]
         query = {"database": database, "collection": collection}
         new_value = {"$set": {"descriptors.number_of_documents": number_of_documents, "descriptors.size_mb": size_mb,
                               "descriptors.created": created, "descriptors.last_update": last_update}}
         try:
-            coll.update_one(query, new_value)
+            self.dbc.get_interface("graggle", "dataset_descriptions").update_one(query, new_value)
         except Exception as e:
             logger.error(e)
 
@@ -153,8 +173,9 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         col = dataset_description["collection"]
         if dataset_description["image"] == "":
             try:
-                entries = [
-                    db_accessor.get_data(db, col, return_images=True, query={}, doc_count=1, random_sample=True)
+                interface = self.dbc.get_interface(db, col)
+                entries = [                                        
+                    interface.get_data(return_images=True, query={}, doc_count=1, random_sample=True)
                     for index in range(0, 12)]
                 if "image" in entries[0][0]:
                     preview_image = utils.create_random_4_3_preview_image([entry[0]["image"] for entry in entries])
@@ -166,8 +187,11 @@ class MetadataTransferMongoDBMinioS3(MetadataTransferInterface):
         else:
             dataset_description["image"] = utils.convert_base_64_to_ndarray(dataset_description["image"])
 
-        inserted_ids = db_accessor.insert_data(dataset_description, "graggle", "dataset_descriptions")
-        return inserted_ids
+        result = self.dbc.get_interface("graggle", "dataset_descriptions").insert_one(dataset_description)
+        if result.acknowledged:
+            return True
+        else:
+            return False
 
 class DataTransferMongoDBMinioS3(DataTransferInterface):
     # remove system databases
@@ -175,7 +199,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
                   'test-customer-root-id-test-customer-id']
 
     def __init__(self):
-        pass
+        self.dbc = DBC()
 
     def count_documents(self, database: str, collection: str) -> int:
         number_of_documents = my_mongo_client[database][collection].count_documents({})
@@ -209,7 +233,7 @@ class DataTransferMongoDBMinioS3(DataTransferInterface):
             parsed_filter['_id'] = ObjectId(parsed_filter['_id'])
 
         query = parsed_filter
-        documents = db_accessor.get_data(database, collection, return_images=True, query=query, doc_count=1,
+        documents = self.dbc.get_interface(database, collection).get_data(return_images=True, query=query, doc_count=1,
                                          skip_count=skip_count, random_sample=True)
         if len(documents) == 0:
             return None
