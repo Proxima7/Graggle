@@ -5,6 +5,7 @@ import numpy as np
 
 from util.utils import average_image_size, create_random_4_3_preview_image, convert_ndarray_to_base_64
 from data_access.data_transfer_objects import Datasets, DatasetDescriptor
+from globals import logger
 
 
 def collection_metadata_description_updater(cron):
@@ -24,26 +25,27 @@ def collection_metadata_description_updater(cron):
             db = database_collection.database_name
             for collection in database_collection.collection_names:
                 col = collection
-                print(col)
+                logger.debug(f"Handle collection: {col}")
                 number_of_documents, size_mb, created, last_update, preview_image = data_by_collection(cron, db, col)
 
-                datasetdescriptor = DatasetDescriptor(database=db,
-                                               collection=col,
-                                               number_of_documents=number_of_documents,
-                                               usability="",
-                                               created_by="",
-                                               annotation_types="",
-                                               size_mb=size_mb,
-                                               created=created,
-                                               last_update=last_update,
-                                               image="data:image/png;base64," + convert_ndarray_to_base_64(preview_image))
-                datasetdescriptors.append(datasetdescriptor)
+                if number_of_documents != 0:
+                    datasetdescriptor = DatasetDescriptor(database=db,
+                                                   collection=col,
+                                                   number_of_documents=str(number_of_documents),
+                                                   usability="",
+                                                   created_by="",
+                                                   annotation_types="",
+                                                   size_mb=str(size_mb),
+                                                   created=created,
+                                                   last_update=last_update,
+                                                   image="data:image/png;base64," + convert_ndarray_to_base_64(preview_image))
+                    datasetdescriptors.append(datasetdescriptor)
             if run==0:
                 cron.mdti.set_datasets_details(Datasets(datasetdescriptors=datasetdescriptors))
-                print("temp descriptors filled")
+                logger.debug("temp descriptors filled")
         if run > 0:
             cron.mdti.set_datasets_details(Datasets(datasetdescriptors=datasetdescriptors))
-            print("temp descriptors filled")
+            logger.debug("temp descriptors filled")
         run = run + 1
 
         datas = cron.mdti.all_dataset_descriptions()
@@ -71,7 +73,7 @@ def data_by_collection(cron, db, col):
     size_mb = 0
     image_field = ""
     try:
-        document = cron.dti.get_document(db, col, 0, "")
+        document = cron.dti.get_document(db, col, 0, {})
 
         #entry = cron.dbm.db_accessor.get_data(db, col, return_images=True, query={}, doc_count=1, random_sample=True)[0]
         if "image" in document.document:
@@ -82,7 +84,7 @@ def data_by_collection(cron, db, col):
         pass
 
     try:
-        size_mb_average = average_image_size([cron.dti.get_document(db, col, 0, "").document[image_field] for i in range(5)])
+        size_mb_average = average_image_size([cron.dti.get_document(db, col, 0, {}).document[image_field] for i in range(5)])
         size_mb = round(number_of_documents * size_mb_average, 2)
     except Exception as e:
         pass
@@ -90,7 +92,7 @@ def data_by_collection(cron, db, col):
     preview_image = np.zeros((320, 480, 3), dtype=np.uint8)
     preview_image = cv2.putText(preview_image, 'HAS NO IMAGES', (5, 140), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 3, cv2.LINE_AA)
     try:
-        entries = [cron.dti.get_document(db, col, 0, "").document for index in range(0, 12)]
+        entries = [cron.dti.get_document(db, col, 0, {}).document for index in range(0, 12)]
         preview_image = create_random_4_3_preview_image([entry[image_field] for entry in entries])
         preview_image = cv2.resize(preview_image, (320, 240), interpolation=cv2.INTER_AREA)
     except Exception as e:

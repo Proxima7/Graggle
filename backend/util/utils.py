@@ -1,5 +1,6 @@
 import base64
 import io
+from globals import logger
 
 import numpy as np
 from imageio.v2 import imread
@@ -53,7 +54,7 @@ def check_base64_image(image_base64: str):
         assert convert_base_64_to_ndarray(image_base64) is not None
         return True
     except Exception as e:
-        print(f"Exception raised in check_base64_image: {e} parsing data: {_get_first_n_chars(image_base64, 100)}")
+        logger.info(f"Exception raised in check_base64_image: {e}")
         return False
 
 def average_image_size(images: list):

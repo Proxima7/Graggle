@@ -21,14 +21,25 @@
         </div>
       </div>
       <!-- right side of menu -->
-      <div :style="isCollapsed ? 'display: none' : ''" class="col-span-10  flex-1 p-2">
+      <div :style="isCollapsed ? 'display: none' : ''" class="col-span-10 flex-1 px-2 pb-2 pt-1">
           <div v-for="(item) in menu_items" v-bind:key="item.id" 
           v-show="item.active"
           >
             <!-- title -->  
-            <div class="flex min-[1000px]:justify-center border-b-4 mb-2 border-secondary">
-              <div class="text-xl laptop:text-2xl desktop:text-3xl 4k:text-3xl text-gray-300 w-100 leading-2 font-bold">{{ item.title }}</div>
+            <div class="flex min-[1000px]:justify-center border-b-4 mb-2  border-secondary relative">
+              <div class="text-xl laptop:text-2xl desktop:text-3xl 4k:text-3xl text-gray-300 w-100 leading-2 font-bold"
+              :class="item.global ? 'mt-5' : 'mt-1'" >{{ item.title }}</div>
+
+              <div class="absolute right-0 top-0" v-if="item.global">
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" v-model="global_checked">
+                  <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-secondary peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-primary after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-primary after:border-primary after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-secondary peer-checked:bg-green-600"></div>
+                  <span class="ml-1 text-sm font-medium text-gray-300 dark:text-gray-300">GLOBAL</span>
+                </label>
+              </div>
             </div>
+
+            
             
             <!-- content -->
             <component class="h-full" :is="item.comp" ></component>
@@ -42,24 +53,38 @@
 <script>
 import Options from './Options.vue';
 import DatasetList from './DatasetList.vue';
-import BookmarkList from './BookmarkList.vue';
 import Filters from './Filters.vue';
+import BookmarkGroupList from './BookmarkGroupList.vue'; 
+import { watch } from 'vue'
+import { useGeneralStore } from '@/stores/general'
 
 export default {
   name: 'Tagging',
   data () {
     return {
+      gstore: useGeneralStore(),
       cl_menu_item_active: 'border-l-8 border-gray-800',
       p_flex_size: this.flex_size,
       isCollapsed: false,
       buttons_col_span: 'col-span-2',
+      global_checked: false,
       menu_items: [
-        {icon: 'fa-database', active: true, title: 'Datasets', comp: "DatasetList"},
-        {icon: 'fa-bookmark', active: false, title: 'Bookmarks', comp: "BookmarkList"},
-        {icon: 'fa-filter', active: false, title: 'Filters', comp: "Filters"},
-        {icon: 'fa-bars', active: false, title: 'Options', comp: "Options"},
+        {icon: 'fa-database', active: true, title: 'Datasets', comp: "DatasetList", global: false},
+        {icon: 'fa-bookmark', active: false, title: 'Bookmark Groups', comp: "BookmarkGroupList", global: true},
+        {icon: 'fa-filter', active: false, title: 'Filters', comp: "Filters", global: false},
+        {icon: 'fa-bars', active: false, title: 'Options', comp: "Options", global: false},
       ],
     }
+  }, 
+  mounted(){
+    this.global_checked =this.gstore.global_storage
+    watch(() => this.global_checked, (newValue, oldValue) => {
+      this.gstore.global_storage = newValue
+    });
+
+    watch(() => this.gstore.global_storage, (newValue, oldValue) => {
+      this.global_checked = newValue
+    });
   },
   methods: {
     menu_btn_click (item) {
@@ -104,9 +129,9 @@ export default {
   },
   components: {
     DatasetList,
-    BookmarkList,
     Filters,
-    Options
+    Options,
+    BookmarkGroupList
   }
 }
 </script>

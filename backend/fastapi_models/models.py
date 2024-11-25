@@ -25,3 +25,4 @@ class Comment(BaseModel):
 
 class Comments(BaseModel):
     comments: List[Comment] = []
+

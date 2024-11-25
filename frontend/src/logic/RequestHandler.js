@@ -61,6 +61,14 @@ class RequestHandler {
         return this.requests_axios.get(this.backendURL + '/dataset/document/'+db+'/'+col+'/'+number+'/'+filter+'?low_resolution='+low_resolution).then(callback).catch(callback_error)
     }
 
+    get_bookmark_groups(callback){
+        return this.requests_axios.get(this.backendURL + "/bookmarkgroups", {timeout: 10000} ).then(callback)
+    }
+
+    post_bookmark_groups(callback, body){
+        return this.requests_axios.post(this.backendURL + "/bookmarkgroups", body, {timeout: 10000}).then(callback)
+    }
+
 
 
 }

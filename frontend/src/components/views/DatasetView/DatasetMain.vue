@@ -12,14 +12,14 @@
                         :class="!tab.active ? 'text-gray-600 hover:text-gray-900' : ' bg-gray-500 text-gray-900 border-primary border-b-2 font-bold'"
                         class="inline-block bg-gray-300  rounded-t-lg active cursor-pointer
                                 text-xs laptop:text-sm desktop:text-lg 4k:text-xl
-                                p-1 laptop:p-2 desktop:p-3 4k:p-3">
+                                py-1 px-1 laptop:px-2 desktop:px-3 4k:px-3">
                             {{tab.title}}
                         
                         </div>
                     </li>
                 </ul>
 
-                <div class="mt-2">
+                <div class="mt-0">
                     <div v-if="activeTab === 1">
                         <DatasetExplorer/>
                     </div>
@@ -48,6 +48,7 @@ import DatasetExplorer from "./DatasetExplorer.vue"
 // if you used v1.0.5 or latster ,you should add import "vue3-json-viewer/dist/index.css"
 import { useGeneralStore } from '@/stores/general'
 import { useDatasetStore } from '@/stores/dataset'
+import { watch } from 'vue'
 
 
 
@@ -67,6 +68,9 @@ export default {
         }
     },
     mounted() {
+        watch(() => this.gstore.selected_dataset_id, (newValue, oldValue) => {
+            this.activate(2)
+        });
     },
     computed: {
     },     

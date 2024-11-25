@@ -2,7 +2,7 @@
     <!--
         Data Card
     -->
-    <div class="border-2 shadow rounded p-2 w-full">
+    <div class="border-2 shadow rounded p-2 w-full relative">
         <div v-if="!isExpanded" >
             <div class="grid grid-cols-12">
                 <div class="max-[600px]:col-span-12 min-[600px]:col-span-10">             
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div v-if="isExpanded" class="">
-            <div class="overflow-hidden transition-height duration-300 mx-auto flex border-primary relative grid grid-cols-4">
+            <div class="overflow-hidden transition-height duration-300 mx-auto flex border-primary  grid grid-cols-4">
                 <loading-overlay v-if="datasetstore.is_dataset_loading()" :loading="datasetstore.is_dataset_loading()" headline="Loading" subline="Data Card"></loading-overlay>
 
                 <!-- left content-->
@@ -54,8 +54,7 @@
                             <div class="w-1/2 flex justify-end">
                                 <p class="text-ml laptop:text-xl desktop:text-2xl 4k:text-3xl font-bold tracking-tight">
                                     <font-awesome-icon class="px-1" icon="fa-solid fa-share-nodes" @click='share()'/>
-                                    <font-awesome-icon v-if="bookmarked==false" class="px-1" icon="fa-regular fa-bookmark" @click='bookmark()'/>
-                                    <font-awesome-icon v-if="bookmarked==true" class="px-1" icon="fa-solid fa-bookmark" @click='unbookmark()'/>
+                                    <font-awesome-icon class="px-1" icon="fa-solid fa-bookmark" @click='bookmark()' @contextmenu="bookmarkgroups($event)"/>
                                     <font-awesome-icon class="px-1" icon="fa-solid fa-comments" @click='comments()'/>
                                     <font-awesome-icon class="px-1" icon="fa-regular fa-pen-to-square" />
                                 </p>
@@ -69,21 +68,25 @@
                 <div class="col-span-4 desktop:col-span-2 4k:col-span-2">
                     <DatasetDescriptionCard :dataset_description="datasetstore.get_dataset_description()"/>
                 </div>
-
-                <!-- overlay with button to add data-->    
-                <div v-if="(datasetstore.get_dataset_description() === null || datasetstore.get_dataset_description().dataset_display_title === '<<Titel>>') && gstore.selected_col != '' && datasetstore.is_dataset_loading() === false" > 
-                    <div class="absolute inset-0 bg-gray-700 opacity-20">
-
-                    </div>
-                    <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white font-bold py-2 px-4 rounded
-                        text-sm laptop:text-lg desktop:text-xl 4k:text-2xl" @click="dataset_add_dialog_show = !dataset_add_dialog_show">
-                        <font-awesome-icon class="pr-2" icon="fa-solid fa-circle-plus" /> Insert Description
-                    </button>
-                </div>
+                
             </div>
-
-            <DatasetAddDialog :showDialog=dataset_add_dialog_show @update:showDialog="dialog_finished"></DatasetAddDialog>
         </div>
+
+
+         <!-- overlay with button to add data-->    
+         <div v-if="(datasetstore.get_dataset_description() === null || datasetstore.get_dataset_description().dataset_display_title === '<<Titel>>') && gstore.selected_col != '' && datasetstore.is_dataset_loading() === false" > 
+            <div class="absolute inset-0 bg-gray-700 opacity-20">
+
+            </div>
+            <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white font-bold py-2 px-4 rounded
+                text-sm laptop:text-lg desktop:text-xl 4k:text-2xl" @click="dataset_add_dialog_show = !dataset_add_dialog_show">
+                <font-awesome-icon class="pr-2" icon="fa-solid fa-circle-plus" /> Insert Description
+            </button>
+        </div>
+
+        <DatasetAddDialog :showDialog=dataset_add_dialog_show @update:showDialog="add_dialog_finished"></DatasetAddDialog>
+
+        <BookmarkGroupDialog :showDialog=bookmark_group_dialog_show @update:showDialog="bookmark_group_dialog_finished"></BookmarkGroupDialog>
     </div>
 
 </template>
@@ -94,15 +97,15 @@ import LoadingOverlay from "../../Helpers/LoadingOverlay.vue"
 import DatasetDescriptionCard from "./DatasetDescriptionCard.vue"
 import { useGeneralStore } from '@/stores/general'
 import { useDatasetStore } from '@/stores/dataset'
-import { Bookmark } from "../../Helpers/Bookmarks.js"
 import { watch } from 'vue'
 import DatasetAddDialog from "./DatasetAddDialog.vue"
+import BookmarkGroupDialog from "./BookmarkGroupDialog.vue"
 
 export default {
     data () {
         return {
             dataset_add_dialog_show: false,
-            bookmarked: false,
+            bookmark_group_dialog_show: false,
             gstore: useGeneralStore(),
             datasetstore: useDatasetStore(),
             isExpanded: true
@@ -110,15 +113,21 @@ export default {
     },
     mounted() {
         this.shrink_auto()
-        this.reset(true)
         this.datasetstore.load_dataset_description()
 
         watch(() => this.gstore.selected_col, (newValue, oldValue) => {
-            this.reset(true)
             this.datasetstore.load_dataset_description()
+        });
+
+        watch(() => this.gstore.cmd, (newValue, oldValue) => {
+            if(newValue=="bookmarkgroupsdialog"){
+                this.gstore.cmd=""
+                this.bookmark()
+            }
         });
     },     
     methods: {
+        
         async share(){
             if (true) {               
                 try {
@@ -136,24 +145,19 @@ export default {
             let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
             await sleep(3000)
             this.isExpanded = false
+            console.log("shrink")
         },
         bookmark(){
-            this.bookmarked=true
-            Bookmark.bookmark(this.gstore)
+            this.bookmark_group_dialog_show = !this.bookmark_group_dialog_show
         },
-        unbookmark(){
-            this.bookmarked=false
-            Bookmark.unbookmark(this.gstore)            
+        bookmarkgroups: function(e) {
+            this.bookmark()
+            e.preventDefault();
         },
-        isbookmarked(){
-            return Bookmark.isbookmarked(this.gstore) 
-        },
-        reset(complete){
-            if(complete){
-                this.bookmarked = this.isbookmarked()
-            }            
-        },
-        dialog_finished(){
+        bookmark_group_dialog_finished(){
+            this.bookmark_group_dialog_show = false
+        },        
+        add_dialog_finished(){
             this.dataset_add_dialog_show = false
             this.datasetstore.load_dataset_description()
         },
@@ -164,7 +168,8 @@ export default {
     components: { 
         DatasetDescriptionCard,
         DatasetAddDialog,
-        LoadingOverlay
+        LoadingOverlay,
+        BookmarkGroupDialog
     }
 }
 </script>

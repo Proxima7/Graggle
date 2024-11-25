@@ -5,6 +5,44 @@ from data_access.data_transfer_objects import Databases
 from data_access.data_transfer_objects import Document
 from data_access.data_transfer_objects import Datasets
 from data_access.data_transfer_objects import DatasetDescription
+from data_access.data_transfer_objects import Bookmarkgroups
+
+class UserSessionInterface:
+    """
+    Interface for a user session
+
+    Domain: Data direct linked to the SSO user
+    """
+
+    @abc.abstractmethod
+    def get_username(self) -> str:
+        """
+        Interface to get username
+
+        Returns: username
+
+        """
+        pass
+
+    @abc.abstractmethod
+    def get_bookmark_groups(self) -> Bookmarkgroups:
+        """
+        Interface to get Bookmarkgroups of user
+
+        Returns: Bookmarkgroups
+
+        """
+        pass
+
+    @abc.abstractmethod
+    def set_bookmark_groups(self) -> Bookmarkgroups:
+        """
+        Interface to set Bookmarkgroups of user
+
+        Returns: Bookmarkgroups
+
+        """
+        pass
 
 class DataTransferInterface:
     """
