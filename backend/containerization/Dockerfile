@@ -6,10 +6,16 @@ RUN apt update && apt upgrade -y && apt-get install ffmpeg libsm6 libxext6 -y &&
 
 COPY pip.ini /etc/pip.conf
 
-
 # python requirements
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt --no-cache-dir
+
+
+
+#COPY ./database_accessor-4.3.7-py3-none-any.whl .
+#RUN pip3 install ./database_accessor-4.3.7-py3-none-any.whl
+
+
 COPY . .
 
 # fasapi webservice
